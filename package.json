@@ -1,0 +1,28 @@
+{
+  "name": "web2p1",
+  "version": "1.0.0",
+  "description": "Projeto 1 - Web 2",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jmarioss/projeto1-pweb2.git"
+  },
+  "keywords": [
+    "node",
+    "api",
+    "backend",
+    "endpoint"
+  ],
+  "author": "Jose Mario & Luis Miguel",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jmarioss/projeto1-pweb2/issues"
+  },
+  "homepage": "https://github.com/jmarioss/projeto1-pweb2#readme",
+  "dependencies": {
+    "express": "^4.21.1"
+  }
+}

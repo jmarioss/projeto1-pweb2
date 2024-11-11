@@ -23,6 +23,7 @@
   },
   "homepage": "https://github.com/jmarioss/projeto1-pweb2#readme",
   "dependencies": {
-    "express": "^4.21.1"
+    "express": "^4.21.1",
+    "pg": "^8.13.1"
   }
 }

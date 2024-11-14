@@ -1,0 +1,1 @@
+// Desenvolver token de convite para que usuários possam se cadastrar

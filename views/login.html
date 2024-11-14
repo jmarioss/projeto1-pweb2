@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PW2-Projeto1</title>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username">
+            <input type="password" id="userpassword">
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+    <script>
+        const loginform = document.getElementById(loginForm)
+        loginform.addEventListener('submit', async (event) => {
+            event.preventDefault
+            const username = document.getElementById(username).value
+            const userpassword = document.getElementById(userpassword).value
+
+            fetch('/login', {
+                method: 'POST',
+                headers: {
+                    'content-Type': 'aplication/json',
+                },
+                body: JSON.stringify({ username, userpassword})
+            })
+        })
+    </script>
+</body>
+</html>

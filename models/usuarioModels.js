@@ -27,7 +27,7 @@ class Usuario {
         const value = [ email ]
 
         try{
-            const res = client.query(query, value)
+            const res = await client.query(query, value)
             return res.rows[0]
         }catch(error){
             console.error("Erro ao buscar usuário, erro: ", error)

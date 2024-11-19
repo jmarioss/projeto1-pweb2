@@ -4,7 +4,7 @@ const Usuario = require("../models/usuarioModels")
 
 exports.login = async ( req, res ) => {
     const { email, senha } = req.body
-    const user = Usuario.findUsuario(email)
+    const user = await Usuario.findUsuario(email)
 
     try{
         if(!user){
@@ -33,8 +33,13 @@ exports.login = async ( req, res ) => {
 
 exports.cadastrar = async ( req, res ) => {
     const { nome, email, senha} = req.body
+    const tryEmail = await Usuario.findUsuario(email)
+    if(tryEmail){
+        res.status(409).json({error: 'Email já cadastrado'})
+    }
+
     try{
-        const novoUsuario = await Usuario.create(nome, email, senha)
+        const novoUsuario = await Usuario.createUsuario(nome, email, senha)
         res.status(200).json(novoUsuario)
     }catch(error){
         res.status(500).json({error: 'Não foi possível cadastrar usuário'})

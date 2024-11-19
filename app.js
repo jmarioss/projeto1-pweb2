@@ -6,10 +6,11 @@ require('dotenv').config
 
 app.use(express.json())
 
+app.use("/login", usuarioRoutes)
+app.use("/cadastrar", usuarioRoutes)
+
 app.get("/", function(req, res){
     res.write("Test")
 })
-
-app.use("/cadastrar", usuarioRoutes)
 
 app.listen(port, function(){})

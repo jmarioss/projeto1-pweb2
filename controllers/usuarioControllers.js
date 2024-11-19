@@ -1,9 +1,8 @@
-const asyncHandler = require("express-async-handler")
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const Usuario = require("../models/usuarioModels")
 
-exports.login = asyncHandler(async ( req, res ) => {
+exports.login = async ( req, res ) => {
     const { email, senha } = req.body
     const user = Usuario.findUsuario(email)
 
@@ -23,17 +22,16 @@ exports.login = asyncHandler(async ( req, res ) => {
                 type: user.tipo,
             }, 
             process.env.JWT_SECRET,
-            {expiresIn: '1h'}
+            {expiresIn: '2h'}
         )
 
         res.status(200).json({token})
     }catch(error){
         res.status(401).json({error: 'Não foi possível fazer login'})
     }
-    
-})
+}
 
-exports.cadastrar = asyncHandler(async ( req, res ) => {
+exports.cadastrar = async ( req, res ) => {
     const { nome, email, senha} = req.body
     try{
         const novoUsuario = await Usuario.create(nome, email, senha)
@@ -41,4 +39,4 @@ exports.cadastrar = asyncHandler(async ( req, res ) => {
     }catch(error){
         res.status(500).json({error: 'Não foi possível cadastrar usuário'})
     }
-})
+}

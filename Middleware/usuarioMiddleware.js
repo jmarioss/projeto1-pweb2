@@ -1,4 +1,4 @@
-const jwt = request('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 
 const validaAdmin = async (req, res) => {
     const token = req.headers.authorization && req.headers.authorization.split(' ')[1]

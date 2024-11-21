@@ -11,7 +11,7 @@ app.get("/", function(req, res){
     res.send("Test")
 })
 app.use("/login", router)
-app.use("/cadastrar", router)
+app.use("/usuario", router)
 
 app.listen(port, () => {
     console.log(`Conectado na porta localhost:${port}`)

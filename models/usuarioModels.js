@@ -1,9 +1,9 @@
 const { pool } = require("../config/db.js")
 
 class Usuario {
-    static async createUsuario({nome, email, senha}){
-        if (!email) {
-            console.log("Senha não fornecida");
+    static async createUsuario(nome, email, senha){
+        if (!nome || !email || !senha) {
+            console.log("Dados não fornecidos");
         }
         const bcrypt = require("bcrypt")
         const saltRounds = 10

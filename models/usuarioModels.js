@@ -14,7 +14,7 @@ class Usuario {
         VALUES ($1, $2, $3, $4)
         RETURNING *
         `
-        const values = [nome, email, senhaHash, 'administrador']
+        const values = [nome, email, senhaHash, 'aluno']
 
         try{
             const res = await pool.query(query, values)

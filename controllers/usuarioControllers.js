@@ -38,7 +38,6 @@ exports.cadastrar = async ( req, res ) => {
         const novoUsuario = await Usuario.createUsuario(nome, email, senha)
         res.status(200).json(novoUsuario)
     }catch(error){
-        //res.status(500).json({error: 'Não foi possível cadastrar usuário'})
-        res.status(500).json({ error: 'Não foi possível cadastrar o usuário', details: error.message }); // Adicionando detalhes do erro
+        res.status(500).json({ error: 'Não foi possível cadastrar o usuário', details: error.message }); 
     }
 }

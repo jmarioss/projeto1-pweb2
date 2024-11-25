@@ -21,7 +21,8 @@ exports.login = async ( req, res ) => {
             process.env.JWT_SECRET,
             {expiresIn: '2h'}
         )
-        res.status(200).json({token})
+        res.setHeader('Authorization', `Bearer ${token}`)
+        res.status(200).send({message: "Login bem-sucedido"})
     }catch(error){
         res.status(401).json({error: 'Não foi possível fazer login'})
     }

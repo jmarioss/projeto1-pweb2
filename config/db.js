@@ -1,5 +1,9 @@
-//const Sequelize = require("sequelize")
-const { Pool } = require("pg")
+const Sequelize = require("sequelize")
+const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
+    host: 'localhost',
+    dialect: 'postgres'
+  });
+/*const { Pool } = require("pg")
 
 const pool = new Pool({
     user: 'postgres',
@@ -28,15 +32,9 @@ async function desconectar() {
     }
 }
 
-// Adicionar Sequelize e validas
 
-const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
-    host: 'localhost',
-    dialect: 'postgres',
-    port: 5432,
-    logging: false, // Desativa os logs SQL (opcional)
-  });
+
 */
 
-//module.exports = { sequelize, pool, conectar, desconectar }
-module.exports = { pool }
+module.exports = sequelize
+//module.exports = { pool }

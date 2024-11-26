@@ -1,26 +1,28 @@
 const Projeto = require("../models/projetoModels")
-const ProjetoPalavaChave = require("../models/projeto_palavra_chaveModels")
 const ProjetoDevs = require("../models/projeto_desenvolvedoresModels") 
-const PalavraChave = require("../models/palavra_chaveModels")
+const ProjetoPalavraChave = require("../models/projeto_palavra_chaveModels")
 
 exports.criar = async ( req, res ) => {
     const { nome_projeto, resumo, link, id_palavra_chave, id_alunos } = req.body 
-
+    if(!nome_projeto || !resumo || !link || !id_palavra_chave || !id_alunos){
+        res.status(401).json({error: "Informe todos os campos"})
+    }
     try{
-        if(!nome_projeto || !resumo || !link || !id_palavra_chave || !id_alunos){
-            res.status(401).json({error: "Informe todos os campos"})
-        }
+        const novoProjeto = await Projeto.create(
+            {
+                nome_projeto: nome_projeto,
+                resumo_projeto: resumo,
+                link_externo: link,
+            }
+        )
 
-        const palavra_chave = await PalavraChave.FindAll({
-            where: {
-                id: {
-                    [op.in]: id_palavra_chave
-                }
-            },
-            attributes: ['id'],
-            raw: true
-        })
-        
+        const  novoProjetoPalavraChave = id_palavra_chave.map((idPalavraChave) => ({
+            id_projeto: novoProjeto.id,
+            id_palavra_chave: idPalavraChave
+        })) 
+
+        await ProjetoPalavraChave.bulkCreate(novoProjetoPalavraChave)
+
     }catch(error){
         res.status(401).json({error: "Não foi possível criar projeto"})
     }

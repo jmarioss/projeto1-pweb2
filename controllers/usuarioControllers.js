@@ -56,20 +56,20 @@ exports.cadastrar = async ( req, res ) => {
     const { nome, email, senha} = req.body
 
     if (!nome || !email || !senha) {
-        console.log("Dados não fornecidos");
+        res.status(401).json({error: "Informe todos os dados"})
     }
-    const bcrypt = require("bcrypt")
-    const saltRounds = 10
-    const senhaHash = await bcrypt.hash(senha, saltRounds)
 
     try{
+        const saltRounds = 10
+        const senhaHash = await bcrypt.hash(senha, saltRounds)
+
         const novoUsuario = await Usuario.create(
             {
                 nome_usuario: nome,
                 email: email,
                 senha_hash: senhaHash,
                 tipo: 'aluno',
-            },
+            }
         )
      //   const novoUsuario = await Usuario.createUsuario(nome, email, senhaHash)
         res.status(200).json(novoUsuario)

@@ -1,9 +1,9 @@
 const express = require("express")
 const router = express.Router()
 const usuarioControllers = require("../controllers/usuarioControllers") 
-const validaAdmin = require("../Middleware/usuarioMiddleware")
+const authenticator = require("../Middleware/usuarioMiddleware")
 
 router.post("/", usuarioControllers.login)
-router.post("/cadastrar", validaAdmin, usuarioControllers.cadastrar)
+router.post("/cadastrar/create", authenticator.validaAdmin, usuarioControllers.cadastrar)
 
 module.exports = router

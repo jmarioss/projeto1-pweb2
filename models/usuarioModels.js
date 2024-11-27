@@ -1,6 +1,10 @@
 const bcrypt = require("bcrypt")
 const { DataTypes } = require("sequelize")
 const database = require("../config/db")
+const Projeto = require("./projetoModels")
+const ProjetoDevs = require("./projeto_desenvolvedoresModels")
+const Conhecimento = require("./conhecimentoModels")
+const UsarioConhecimento = require("./usuario_conhecimentoModels")
 
 const Usuario = database.define('Usuario',
     {
@@ -45,41 +49,8 @@ Usuario.prototype.validaSenha = async function(senha){
     return bcrypt.compare(senha, this.senha_hash)
 }
 
-//const { pool } = require("../config/db.js")
+Usuario.belongsToMany(Projeto, {through: ProjetoDevs})
 
-/*
-class Usuario {
-    static async createUsuario(nome, email, senha){
-        
-        const query = `
-        INSERT INTO usuarios (nome_usuario, email, senha_hash, tipo)
-        VALUES ($1, $2, $3, $4)
-        RETURNING *
-        `
-        const values = [nome, email, senhaHash, 'aluno']
+Usuario.belongsToMany(Conhecimento, {through: UsarioConhecimento})
 
-        try{
-            const res = await pool.query(query, values)
-            console.log("Usuário criado com sucesso")
-            return res.rows[0]
-        }catch(error){
-            console.error("Não foi possível criar o usuário, erro: ", error.message)
-            throw error
-        }
-    }
-
-    static async findUsuario(email){
-        const query = `SELECT * FROM usuarios WHERE email = $1`
-        const value = [email]
-
-        try{
-            const res = await pool.query(query, value)
-            return res.rows[0]
-        }catch(error){
-            console.error("Erro ao buscar usuário, erro: ", error)
-            throw error;
-        }
-    }
-}
-*/
 module.exports = Usuario

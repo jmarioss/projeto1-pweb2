@@ -4,7 +4,21 @@ const ProjetoPalavraChave = require("../models/projeto_palavra_chaveModels")
 const Usuario = require("../models/usuarioModels")
 const PalavraChave = require("../models/palavra_chaveModels")
 
-exports.criarPagina = async ( req, res ) => {
+exports.paginaListarProjeto = async ( req, res ) => {
+    try{
+        const allProject = await Projeto.FindAll({
+            include: {
+                models: Usuario,
+                atributes: ["id", "nome", "email"]
+            }
+
+        })
+    }catch(error){
+        return res.status(500).json({error: "Não foi possível carregar página", details: error.message})
+    }
+}
+
+exports.paginaCriarProjeto = async ( req, res ) => {
     try{
         const [ listPalavrasChaves, listUsuarios ] = await Promise.all([
             PalavraChave.FindAll({}),

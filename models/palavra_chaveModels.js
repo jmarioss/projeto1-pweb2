@@ -1,5 +1,7 @@
 const { DataTypes } = require("sequelize")
 const database = require("../config/db")
+const Projeto = require("./projetoModels")
+const ProjetoPalavraChave = require("./projeto_palavra_chaveModels")
 
 const PalavraChave = database.define('PalavraChave',
     {
@@ -20,5 +22,7 @@ const PalavraChave = database.define('PalavraChave',
         timestamps: false,
     },
 )
+
+PalavraChave.belongsToMany(Projeto, {through: ProjetoPalavraChave})
 
 module.exports = PalavraChave

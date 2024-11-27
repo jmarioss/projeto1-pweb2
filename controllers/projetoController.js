@@ -1,6 +1,26 @@
 const Projeto = require("../models/projetoModels")
 const ProjetoDevs = require("../models/projeto_desenvolvedoresModels") 
 const ProjetoPalavraChave = require("../models/projeto_palavra_chaveModels")
+const Usuario = require("../models/usuarioModels")
+const PalavraChave = require("../models/palavra_chaveModels")
+
+exports.criarPagina = async ( req, res ) => {
+    try{
+        const [ listPalavrasChaves, listUsuarios ] = await Promise.all([
+            PalavraChave.FindAll({}),
+            Usuario.FindAll({})
+        ])
+
+        res.render('criarProjeto', {
+            title: 'Criar Projetto',
+            listPalavrasChaves,
+            listUsuarios
+        })
+    }catch(error){
+        return res.status(500).json({error: "Não foi possível carregar a página", details: error.message})
+    }
+    
+}
 
 exports.criar = async ( req, res ) => {
     const { nome_projeto, resumo, link, id_palavra_chave, id_alunos } = req.body 

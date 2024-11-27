@@ -29,7 +29,8 @@ const UsuarioConhecimento = database.define('UsuarioConhecimento',
         },
     },
     {
-        tableName: 'usuarios_conhecimentos'
+        tableName: 'usuarios_conhecimentos',
+        timestamps: false,
     },
 )
 

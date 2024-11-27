@@ -20,6 +20,7 @@ const ProjetoDevs = database.define('ProjetoDevs',
     },
     {
         tableName: 'projetos_desenvolvedores',
+        timestamps: false,
     },
 )
 

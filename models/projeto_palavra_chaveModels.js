@@ -19,7 +19,8 @@ const ProjetoPalavraChave = database.define('ProjetoPalavraChave',
         },
     },
     {
-        tableName: 'projetos_palavras_chaves'
+        tableName: 'projetos_palavras_chaves',
+        timestamps: false,
     },
 )
 

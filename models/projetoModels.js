@@ -24,6 +24,7 @@ const Projeto = database.define('Projeto',
     },
     {
         tableName: 'projetos',
+        timestamps: false,
     },
 )
 

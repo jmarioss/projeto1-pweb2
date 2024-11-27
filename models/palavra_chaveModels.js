@@ -17,6 +17,7 @@ const PalavraChave = database.define('PalavraChave',
     },
     {
         tableName: 'palavras_chaves',
+        timestamps: false,
     },
 )
 

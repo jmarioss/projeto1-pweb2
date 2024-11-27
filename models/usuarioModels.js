@@ -37,6 +37,7 @@ const Usuario = database.define('Usuario',
     },
     {
         tableName: 'usuarios',
+        timestamps: false,
     },
 )
 

@@ -18,6 +18,7 @@ const Conhecimento = database.define('Conhecimento',
     },
     {
         tableName: 'conhecimentos',
+        timestamps: false,
     },
 )
 

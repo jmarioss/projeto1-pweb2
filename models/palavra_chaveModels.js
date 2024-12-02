@@ -23,6 +23,8 @@ const PalavraChave = database.define('PalavraChave',
     },
 )
 
-PalavraChave.belongsToMany(Projeto, {through: ProjetoPalavraChave})
+PalavraChave.associate = function() {
+    PalavraChave.belongsToMany(Projeto, {through: ProjetoPalavraChave})
+}
 
 module.exports = PalavraChave

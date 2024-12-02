@@ -5,7 +5,7 @@ const app = express()
 const port = 8081
 const routerUsuario = require("./routes/usuarioRoutes")
 const routerProjeto = require("./routes/projetoRoutes")
-const routerPalavraChave = require("./routes/palavra_chave.Routes")
+const routerPalavraChave = require("./routes/palavra_chaveRoutes")
 const bodyParser = require("body-parser")
 
 app.use(bodyParser.json()); 

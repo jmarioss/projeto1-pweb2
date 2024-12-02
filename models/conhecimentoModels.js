@@ -24,6 +24,8 @@ const Conhecimento = database.define('Conhecimento',
     },
 )
 
-Conhecimento.belongsToMany(Usuario, {through: UsuarioConhecimento})
+Conhecimento.associate = function() {
+    Conhecimento.belongsToMany(Usuario, {through: UsuarioConhecimento})
+}
 
 module.exports = Conhecimento

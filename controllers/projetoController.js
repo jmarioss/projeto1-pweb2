@@ -6,11 +6,11 @@ const PalavraChave = require("../models/palavra_chaveModels")
 
 exports.paginaListarProjetosAll = async ( req, res ) => {
     try{
-        const allProject = await Projeto.FindAll({
-            include: {
-                models: Usuario,
-                attributes: ["id_usuario", "nome_usuario", "email"]
-            }
+        const allProject = await Projeto.findAll({
+            include: [
+                Usuario
+               //attributes: ["id_usuario", "nome_usuario", "email"]
+            ]
         })
 
         res.render("listarProjetos", {
@@ -25,8 +25,8 @@ exports.paginaListarProjetosAll = async ( req, res ) => {
 exports.paginaCriarProjeto = async ( req, res ) => {
     try{
         const [ listPalavrasChaves, listUsuarios ] = await Promise.all([
-            PalavraChave.FindAll({}),
-            Usuario.FindAll({})
+            PalavraChave.findAll({}),
+            Usuario.findAll({})
         ])
 
         res.render('criarProjeto', {

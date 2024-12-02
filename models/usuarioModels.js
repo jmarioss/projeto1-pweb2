@@ -49,8 +49,9 @@ Usuario.prototype.validaSenha = async function(senha){
     return bcrypt.compare(senha, this.senha_hash)
 }
 
-Usuario.belongsToMany(Projeto, {through: ProjetoDevs})
-
-Usuario.belongsToMany(Conhecimento, {through: UsarioConhecimento})
+Usuario.associate = function(){
+    Usuario.belongsToMany(Projeto, {through: ProjetoDevs})
+    Usuario.belongsToMany(Conhecimento, {through: UsarioConhecimento})
+}
 
 module.exports = Usuario

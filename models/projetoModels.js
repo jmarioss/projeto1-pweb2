@@ -31,9 +31,10 @@ const Projeto = database.define('Projeto',
         timestamps: false,
     },
 )
-
-Projeto.belongsToMany(Usuario, {through: ProjetoDevs})
-
-Projeto.belongsToMany(PalavraChave, {through: ProjetoPalavraChave})
+Projeto.associate = function() {
+    Projeto.belongsToMany(Usuario, {through: ProjetoDevs})
+    Projeto.belongsToMany(PalavraChave, {through: ProjetoPalavraChave})
+    PalavraChave.belongsToMany(Projeto, {through: ProjetoPalavraChave})
+}
 
 module.exports = Projeto

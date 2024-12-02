@@ -3,6 +3,11 @@ const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
     host: 'localhost',
     dialect: 'postgres'
   });
+
+(async () => {
+  await sequelize.sync({ alter: true });
+    console.log('Modelos sincronizados com o banco de dados.');
+})
 /*const { Pool } = require("pg")
 
 const pool = new Pool({

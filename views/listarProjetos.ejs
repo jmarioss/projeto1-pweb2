@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= title %></title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Adicione o seu CSS -->
+</head>
+<body>
+    <header>
+        <h1><%= title %></h1>
+    </header>
+
+    <main>
+        <% if (allProject.length > 0) { %>
+            <section>
+                <h2>Lista de Projetos</h2>
+                <ul>
+                    <% allProject.forEach(projeto => { %>
+                        <li>
+                            <h3><%= projeto.nome %></h3>
+                            <p><strong>Descrição:</strong> <%= projeto.descricao %></p>
+                            <p><strong>Usuários:</strong></p>
+                            <ul>
+                                <% if (projeto.Usuarios && projeto.Usuarios.length > 0) { %>
+                                    <% projeto.Usuarios.forEach(usuario => { %>
+                                        <li>
+                                            <%= usuario.nome_usuario %> 
+                                            (<%= usuario.email %>)
+                                        </li>
+                                    <% }) %>
+                                <% } else { %>
+                                    <li>Nenhum usuário associado</li>
+                                <% } %>
+                            </ul>
+                        </li>
+                    <% }) %>
+                </ul>
+            </section>
+        <% } else { %>
+            <p>Nenhum projeto encontrado.</p>
+        <% } %>
+    </main>
+</body>
+</html>

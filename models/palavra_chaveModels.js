@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize")
 const database = require("../config/db")
-const Projeto = require("./projetoModels")
 const ProjetoPalavraChave = require("./projeto_palavra_chaveModels")
 
 const PalavraChave = database.define('PalavraChave',
@@ -23,8 +22,8 @@ const PalavraChave = database.define('PalavraChave',
     },
 )
 
-PalavraChave.associate = function() {
-    PalavraChave.belongsToMany(Projeto, {through: ProjetoPalavraChave})
+PalavraChave.associate = function(models) {
+    PalavraChave.belongsToMany(models.Projeto, {through: ProjetoPalavraChave, foreignKey: 'id_palavra_chave'})
 }
 
 module.exports = PalavraChave

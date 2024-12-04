@@ -7,6 +7,7 @@ const routerUsuario = require("./routes/usuarioRoutes")
 const routerProjeto = require("./routes/projetoRoutes")
 const routerPalavraChave = require("./routes/palavra_chaveRoutes")
 const bodyParser = require("body-parser")
+const db = require('./models/index')
 
 app.use(bodyParser.json()); 
 

@@ -7,10 +7,7 @@ const PalavraChave = require("../models/palavra_chaveModels")
 exports.paginaListarProjetosAll = async ( req, res ) => {
     try{
         const allProject = await Projeto.findAll({
-            include: [
-                Usuario
-               //attributes: ["id_usuario", "nome_usuario", "email"]
-            ]
+            include: [{Usuario}]//attributes: ["id_usuario", "nome_usuario", "email"]
         })
 
         res.render("listarProjetos", {

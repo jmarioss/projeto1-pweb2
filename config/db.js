@@ -4,42 +4,8 @@ const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
     dialect: 'postgres'
   });
 
-(async () => {
-  await sequelize.sync({ alter: true });
-    console.log('Modelos sincronizados com o banco de dados.');
-})
-/*const { Pool } = require("pg")
+const db = {}
+db.sequelize = sequelize
+db.Sequelize = Sequelize
 
-const pool = new Pool({
-    user: 'postgres',
-    host: 'localhost',
-    database: 'postgres',
-    password: 'postgres',
-    port: 5432,
-})
-/*
-async function conectar() {
-    try{
-        await pool.connect()
-        console.log("Conectado")
-    } catch(error){
-        console.error("Não foi possível conectar com o banco, erro: ", error)
-        process.exit
-    }
-}
-
-async function desconectar() {
-    try {
-        await pool.end()
-        console.log("Desconectado do banco de dados")
-    } catch (error){
-        console.error("Não foi possível desconectar do banco de dados, erro:", error)
-    }
-}
-
-
-
-*/
-
-module.exports = sequelize
-//module.exports = { pool }
+module.exports = db

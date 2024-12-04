@@ -1,9 +1,7 @@
 const bcrypt = require("bcrypt")
 const { DataTypes } = require("sequelize")
 const database = require("../config/db")
-const Projeto = require("./projetoModels")
 const ProjetoDevs = require("./projeto_desenvolvedoresModels")
-const Conhecimento = require("./conhecimentoModels")
 const UsarioConhecimento = require("./usuario_conhecimentoModels")
 
 const Usuario = database.define('Usuario',
@@ -49,9 +47,9 @@ Usuario.prototype.validaSenha = async function(senha){
     return bcrypt.compare(senha, this.senha_hash)
 }
 
-Usuario.associate = function(){
-    Usuario.belongsToMany(Projeto, {through: ProjetoDevs})
-    Usuario.belongsToMany(Conhecimento, {through: UsarioConhecimento})
+Usuario.associate = function(models){
+    Usuario.belongsToMany(models.Projeto, {through: ProjetoDevs, foreignKey: 'id_usuario'})
+    Usuario.belongsToMany(models.Conhecimento, {through: UsarioConhecimento, foreignKey: 'id_usuario'})
 }
 
 module.exports = Usuario

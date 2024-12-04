@@ -1,8 +1,6 @@
 const { DataTypes } = require("sequelize")
 const database = require("../config/db")
-const Usuario = require("./usuarioModels")
 const ProjetoDevs = require("./projeto_desenvolvedoresModels")
-const PalavraChave = require("./palavra_chaveModels")
 const ProjetoPalavraChave = require("./projeto_palavra_chaveModels")
 
 const Projeto = database.define('Projeto',
@@ -31,10 +29,9 @@ const Projeto = database.define('Projeto',
         timestamps: false,
     },
 )
-Projeto.associate = function() {
-    Projeto.belongsToMany(Usuario, {through: ProjetoDevs})
-    Projeto.belongsToMany(PalavraChave, {through: ProjetoPalavraChave})
-    PalavraChave.belongsToMany(Projeto, {through: ProjetoPalavraChave})
+Projeto.associate = function(models) {
+    Projeto.belongsToMany(models.Usuario, {through: ProjetoDevs, foreignKey: 'id_projeto'})
+    Projeto.belongsToMany(models.PalavraChave, {through: ProjetoPalavraChave, foreignKey: 'id_projeto'})
 }
 
 module.exports = Projeto

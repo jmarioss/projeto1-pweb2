@@ -1,6 +1,5 @@
 const { DataTypes } = require("sequelize")
 const database = require("../config/db")
-const Usuario = require("./usuarioModels")
 const UsuarioConhecimento = require("./usuario_conhecimentoModels")
 
 const Conhecimento = database.define('Conhecimento',
@@ -24,8 +23,8 @@ const Conhecimento = database.define('Conhecimento',
     },
 )
 
-Conhecimento.associate = function() {
-    Conhecimento.belongsToMany(Usuario, {through: UsuarioConhecimento})
+Conhecimento.associate = function(models) {
+    Conhecimento.belongsToMany(models.Usuario, {through: UsuarioConhecimento, foreignKey: 'id_conhecimento'})
 }
 
 module.exports = Conhecimento

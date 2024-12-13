@@ -1,4 +1,4 @@
-require('dotenv').config
+require('dotenv').config()
 const path = require('path')
 const express = require("express")
 const app = express()
@@ -15,13 +15,20 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
 app.use("/", routerProjeto)
-app.use("/prjeto", routerProjeto)
+app.use("/projeto", routerProjeto)
 
 app.use("/palavra-chave", routerPalavraChave)
 
 app.use("/login", routerUsuario)
 app.use("/usuario", routerUsuario)
 
-app.listen(port, () => {
-    console.log(`Conectado na porta localhost:${port}`)
-})
+db.sequelize.authenticate()
+    .then(() => {
+        console.log('Conwxão com o banco bem-sucedida.')
+        app.listen(port, () => {
+            console.log(`Conectado na porta localhost:${port}`)
+        })
+    })
+    .catch(err => {
+        console.log('Erro ao conectar ao banco', err)
+    })

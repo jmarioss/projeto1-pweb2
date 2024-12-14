@@ -4,8 +4,4 @@ const sequelize = new Sequelize('postgres', 'postgres', 'postgres', {
     dialect: 'postgres'
   });
 
-const db = {}
-db.sequelize = sequelize
-db.Sequelize = Sequelize
-
-module.exports = db
+module.exports = sequelize

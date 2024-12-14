@@ -7,7 +7,7 @@ const routerUsuario = require("./routes/usuarioRoutes")
 const routerProjeto = require("./routes/projetoRoutes")
 const routerPalavraChave = require("./routes/palavra_chaveRoutes")
 const bodyParser = require("body-parser")
-const db = require('./models/index')
+const sequelize = require('./config/db')
 
 app.use(bodyParser.json()); 
 
@@ -22,7 +22,7 @@ app.use("/palavra-chave", routerPalavraChave)
 app.use("/login", routerUsuario)
 app.use("/usuario", routerUsuario)
 
-db.sequelize.authenticate()
+sequelize.authenticate()
     .then(() => {
         console.log('Conwxão com o banco bem-sucedida.')
         app.listen(port, () => {

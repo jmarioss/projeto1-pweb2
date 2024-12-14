@@ -50,17 +50,17 @@ exports.criar = async ( req, res ) => {
                 link_externo: link,
             }
         )
-
+        
         const  novoProjetoPalavraChave = id_palavra_chave.map((idPalavraChave) => (
             {
-                id_projeto: novoProjeto.id,
+                id_projeto: novoProjeto.id_projeto,
                 id_palavra_chave: idPalavraChave
             }
         )) 
 
         const novoProjetoDevs = id_alunos.map((idAluno) => (
             {
-                id_projeto: novoProjeto.id,
+                id_projeto: novoProjeto.id_projeto,
                 id_usuario: idAluno
             }
         ))
@@ -71,6 +71,6 @@ exports.criar = async ( req, res ) => {
         res.status(201).json({message: "Projeto criado com sucesso", novoProjeto,})
 
     }catch(error){
-        res.status(401).json({error: "Não foi possível criar projeto"})
+        res.status(401).json({error: "Não foi possível criar projeto", details: error.message})
     }
 }

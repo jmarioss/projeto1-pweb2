@@ -23,3 +23,12 @@ exports.criar = async ( req, res ) => {
         return res.status(500).json({error: "Não foi possivel cadastrar palavra chave."})
     }
 }
+
+exports.listar = async ( req, res ) => {
+    try{
+        cList = await Conhecimento.findAll()
+        return res.status(201).json({cList})
+    }catch(error){
+        return res.status(500).json({message: "Não foi possivel mostrar a lista de conhecimento."})
+    }
+}

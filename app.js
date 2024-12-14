@@ -6,6 +6,7 @@ const port = 8081
 const routerUsuario = require("./routes/usuarioRoutes")
 const routerProjeto = require("./routes/projetoRoutes")
 const routerPalavraChave = require("./routes/palavra_chaveRoutes")
+const routerConhecimento = require("./routes/conhecimentoRoutes")
 const bodyParser = require("body-parser")
 const sequelize = require('./config/db')
 
@@ -21,6 +22,8 @@ app.use("/palavra-chave", routerPalavraChave)
 
 app.use("/login", routerUsuario)
 app.use("/usuario", routerUsuario)
+
+app.use("/conhecimento", routerConhecimento)
 
 sequelize.authenticate()
     .then(() => {

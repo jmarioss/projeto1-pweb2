@@ -28,7 +28,7 @@ exports.criar = async ( req, res ) => {
 exports.list = async ( req, res ) => {
     try{
         pList = await PalavraChave.findAll()
-        res.status(201).json({message: "Palavras-chaves:", pList})
+        res.status(201).json({pList})
     }catch(error){
         return res.status(401).json({error: "Não foi possivel listar as palavras-chaves", details: error.message})
     }

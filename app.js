@@ -7,6 +7,7 @@ const routerUsuario = require("./routes/usuarioRoutes")
 const routerProjeto = require("./routes/projetoRoutes")
 const routerPalavraChave = require("./routes/palavra_chaveRoutes")
 const routerConhecimento = require("./routes/conhecimentoRoutes")
+const routerUsuarioConhecimento = require("./routes/usuario_conhecimentoController")
 const bodyParser = require("body-parser")
 const sequelize = require('./config/db')
 
@@ -24,6 +25,8 @@ app.use("/login", routerUsuario)
 app.use("/usuario", routerUsuario)
 
 app.use("/conhecimento", routerConhecimento)
+
+app.use("/usuario-conhecimento", routerUsuarioConhecimento)
 
 sequelize.authenticate()
     .then(() => {

@@ -9,6 +9,7 @@ const UsuarioConhecimento = database.define('UsuarioConhecimento',
                 model: 'Usuario',
                 key: 'id_usuario',
             },
+            primaryKey: true
         },
         id_conhecimento: {
             type: DataTypes.INTEGER,
@@ -26,6 +27,7 @@ const UsuarioConhecimento = database.define('UsuarioConhecimento',
                     }
                 },
             },
+            primaryKey: true
         },
     },
     {

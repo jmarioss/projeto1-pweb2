@@ -5,6 +5,6 @@ const authenticator = require("../Middleware/usuarioMiddleware")
 
 router.get("/", projetoController.paginaListarProjetosAll)
 router.get("/new", authenticator.validaToken, projetoController.paginaCriarProjeto)
-router.post("/new/create", /*authenticator.validaToken,*/ projetoController.criar)
+router.post("/new/create", authenticator.validaToken, projetoController.criar)
 
 module.exports = router

@@ -48,8 +48,8 @@ Usuario.prototype.validaSenha = async function(senha){
 }
 
 Usuario.associate = function(models){
-    Usuario.belongsToMany(models.Projeto, {through: ProjetoDevs, foreignKey: 'id_usuario'})
-    Usuario.belongsToMany(models.Conhecimento, {through: UsarioConhecimento, foreignKey: 'id_usuario'})
+    Usuario.belongsToMany(models.Projeto, {through: models.ProjetoDevs, foreignKey: 'id_usuario'})
+    Usuario.belongsToMany(models.Conhecimento, {through: models.UsarioConhecimento, foreignKey: 'id_usuario'})
 }
 
 module.exports = Usuario

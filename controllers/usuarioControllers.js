@@ -6,7 +6,7 @@ exports.login = async ( req, res ) => {
     const { email, senha } = req.body
 
     try{
-        const usuario = await Usuario.findOne({where:{email: {email}}})
+        const usuario = await Usuario.findOne({where: {email}})
         const senhaValida = await usuario.validaSenha(senha)
 
         if(!senhaValida || !usuario){
@@ -24,7 +24,7 @@ exports.login = async ( req, res ) => {
         res.setHeader('Authorization', `Bearer ${token}`)
         res.status(200).send({message: "Login bem-sucedido"})
     }catch(error){
-        res.status(401).json({error: 'Não foi possível fazer login'})
+        res.status(401).json({error: 'Não foi possível fazer login', details: error.message})
     }
 }
 

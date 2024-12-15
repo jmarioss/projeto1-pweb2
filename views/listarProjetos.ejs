@@ -1,45 +1,142 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><%= title %></title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Adicione o seu CSS -->
+    <title>Listar Projetos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+        }
+        header h1 {
+            margin: 0;
+        }
+        header .login-btn {
+            background-color: white;
+            color: #007bff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .search-bar {
+            margin: 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .search-bar input {
+            width: 70%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px 0 0 4px;
+            outline: none;
+        }
+        .search-bar button {
+            padding: 10px 15px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 0 4px 4px 0;
+            cursor: pointer;
+        }
+        .projects {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+            padding: 20px;
+        }
+        .project-card {
+            background-color: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            width: 300px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .project-card h2 {
+            margin: 0 0 10px;
+        }
+        .project-card h3 {
+            margin: 10px 0 5px;
+        }
+        .project-card p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .project-card .keywords {
+            font-size: 0.9em;
+            color: #007bff;
+            margin-top: 10px;
+        }
+    </style>
 </head>
 <body>
     <header>
-        <h1><%= title %></h1>
+        <h1>Projetos</h1>
+        <a href="/login" class="login-btn">Login</a>
     </header>
 
-    <main>
+    <div class="search-bar">
+        <input type="text" id="search" placeholder="Pesquise por projetos...">
+        <button onclick="searchProjects()">Pesquisar</button>
+    </div>
+
+    <div class="projects" id="projects">
+        <!-- Os projetos serão listados aqui -->
         <% if (allProject.length > 0) { %>
-            <section>
-                <h2>Lista de Projetos</h2>
-                <ul>
-                    <% allProject.forEach(projeto => { %>
-                        <li>
-                            <h3><%= projeto.nome %></h3>
-                            <p><strong>Descrição:</strong> <%= projeto.descricao %></p>
-                            <p><strong>Usuários:</strong></p>
-                            <ul>
-                                <% if (projeto.Usuarios && projeto.Usuarios.length > 0) { %>
-                                    <% projeto.Usuarios.forEach(usuario => { %>
-                                        <li>
-                                            <%= usuario.nome_usuario %> 
-                                            (<%= usuario.email %>)
-                                        </li>
-                                    <% }) %>
-                                <% } else { %>
-                                    <li>Nenhum usuário associado</li>
-                                <% } %>
-                            </ul>
-                        </li>
-                    <% }) %>
-                </ul>
-            </section>
+            <% allProject.forEach(project => { %>
+                <div class="project-card">
+                    <h2><%= project.nome_projeto  %></h2>
+                    <h3>Desenvolvedores:</h3>
+                    <ul>
+                        <% project.Usuarios.forEach(user => { %>
+                            <li><%= user.nome_usuario %> (<%= user.email %>)</li>
+                        <% }) %>
+                    </ul>
+                    <% if (project.PalavrasChave && project.PalavrasChave.length > 0) { %>
+                        <div class="keywords">
+                            <strong>Palavras-chave:</strong>
+                            <% project.PalavrasChave.forEach(keyword => { %>
+                                <span><%= keyword.nome_palavra_chave %></span>
+                            <% }) %>
+                        </div>
+                    <% } %>
+                </div>
+            <% }) %>
         <% } else { %>
             <p>Nenhum projeto encontrado.</p>
         <% } %>
-    </main>
+    </div>
+
+    <script>
+        function searchProjects() {
+            const searchInput = document.getElementById('search').value.toLowerCase();
+            const projectCards = document.querySelectorAll('.project-card');
+
+            projectCards.forEach(card => {
+                const title = card.querySelector('h2').textContent.toLowerCase();
+                const keywords = card.querySelector('.keywords') ? card.querySelector('.keywords').textContent.toLowerCase() : '';
+                
+                if (title.includes(searchInput) || keywords.includes(searchInput)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+    </script>
 </body>
 </html>

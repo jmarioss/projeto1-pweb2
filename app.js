@@ -28,6 +28,10 @@ app.use("/conhecimento", routerConhecimento)
 
 app.use("/usuario-conhecimento", routerUsuarioConhecimento)
 
+app.get('/login', (req, res) => {
+    res.sendFile(path.join(__dirname, './views/login.html'));
+  });
+
 sequelize.authenticate()
     .then(() => {
         console.log('Conwxão com o banco bem-sucedida.')

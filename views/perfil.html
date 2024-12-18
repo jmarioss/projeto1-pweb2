@@ -48,7 +48,10 @@
 
     <script>
         // Captura o ID do usuário da URL
-        const idUsuario = window.location.pathname.split("/").pop();
+        //const idUsuario = window.location.pathname.split("/").pop();
+        const userUrl = window.location.href 
+        const idUsuario = userUrl.split("/")[1];
+        //const idUsuario = userUrl.split("/").pop(); testar esse e o de cima
 
         // Função para buscar as informações do perfil do usuário
         async function fetchPerfil(idUsuario) {

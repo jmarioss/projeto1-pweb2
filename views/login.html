@@ -117,6 +117,8 @@
 
                     // Salvar o token em localStorage ou cookies, se necessário
                     localStorage.setItem('token', response.headers.get('Authorization'));
+
+                    window.location.href = `/perfil/${data.id_usuario}`;
                 } else {
                     messageEl.style.display = 'block';
                     messageEl.className = 'error-message';

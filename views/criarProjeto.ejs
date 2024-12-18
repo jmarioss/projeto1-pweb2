@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastrar Projeto</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+        }
+        .form-container input, .form-container textarea, .form-container select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .form-container button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .form-container button:hover {
+            background-color: #45a049;
+        }
+        .error-message {
+            color: red;
+        }
+        .success-message {
+            color: green;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="form-container">
+        <h2>Cadastrar Projeto</h2>
+
+        <div id="message"></div>
+
+        <form id="formProjeto">
+            <label for="nome_projeto">Nome do Projeto:</label>
+            <input type="text" id="nome_projeto" name="nome_projeto" required>
+
+            <label for="resumo">Resumo do Projeto:</label>
+            <textarea id="resumo" name="resumo" rows="4" required></textarea>
+
+            <label for="link">Link Externo:</label>
+            <input type="url" id="link" name="link" required>
+
+            <label for="id_palavra_chave">Palavras-chave (ID):</label>
+            <input type="text" id="id_palavra_chave" name="id_palavra_chave" required placeholder="Exemplo: 1,2,3">
+
+            <label for="id_alunos">ID dos Alunos:</label>
+            <input type="text" id="id_alunos" name="id_alunos" required placeholder="Exemplo: 1,2">
+
+            <button type="submit">Cadastrar Projeto</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('formProjeto').addEventListener('submit', async function(event) {
+            event.preventDefault();
+
+            const nome_projeto = document.getElementById('nome_projeto').value;
+            const resumo = document.getElementById('resumo').value;
+            const link = document.getElementById('link').value;
+            const id_palavra_chave = document.getElementById('id_palavra_chave').value.split(',').map(id => parseInt(id.trim()));
+            const id_alunos = document.getElementById('id_alunos').value.split(',').map(id => parseInt(id.trim()));
+
+            const data = {
+                nome_projeto,
+                resumo,
+                link,
+                id_palavra_chave,
+                id_alunos
+            };
+
+            try {
+                const response = await fetch('http://localhost:3000/api/projetos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                if (response.ok) {
+                    document.getElementById('message').innerHTML = `<p class="success-message">${result.message}</p>`;
+                } else {
+                    document.getElementById('message').innerHTML = `<p class="error-message">${result.error || result.details}</p>`;
+                }
+            } catch (error) {
+                document.getElementById('message').innerHTML = `<p class="error-message">Erro ao enviar dados: ${error.message}</p>`;
+            }
+        });
+    </script>
+
+</body>
+</html>

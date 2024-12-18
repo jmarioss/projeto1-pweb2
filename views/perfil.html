@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil do Usuário</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .profile-container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 300px;
+        }
+        .profile-container h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .profile-container p {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .profile-container .error-message {
+            color: red;
+            font-size: 14px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <h1>Perfil do Usuário</h1>
+        <p id="username"></p>
+        <p id="email"></p>
+        <p id="tipo"></p>
+        <p class="error-message" id="error-message" style="display: none;"></p>
+    </div>
+
+    <script>
+        // Captura o ID do usuário da URL
+        const idUsuario = window.location.pathname.split("/").pop();
+
+        // Função para buscar as informações do perfil do usuário
+        async function fetchPerfil(idUsuario) {
+            try {
+                const token = localStorage.getItem('token'); // Recupera o token do localStorage
+                const response = await fetch(`/perfil/${idUsuario}`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': token // Envia o token no cabeçalho
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Não foi possível carregar as informações do perfil');
+                }
+
+                const data = await response.json();
+                document.getElementById('username').textContent = `Nome: ${data.username}`;
+                document.getElementById('email').textContent = `Email: ${data.email}`;
+                document.getElementById('tipo').textContent = `Tipo: ${data.tipo}`;
+            } catch (error) {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').textContent = error.message;
+            }
+        }
+
+        // Chama a função para buscar o perfil ao carregar a página
+        fetchPerfil(idUsuario);
+    </script>
+</body>
+</html>

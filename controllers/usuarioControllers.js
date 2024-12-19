@@ -5,6 +5,7 @@ const ProjetoDevs = require("../models/projeto_desenvolvedoresModels")
 const Projeto = require("../models/projetoModels")
 const UsuarioConhecimento = require("../models/usuario_conhecimentoModels")
 const Conhecimento = require("../models/conhecimentoModels")
+const ProjetoPalavraChave = require("../models/projeto_palavra_chaveModels")
 
 exports.login = async ( req, res ) => {
     const { email, senha } = req.body
@@ -205,12 +206,23 @@ exports.excluirProjeto = async (req, res) => {
     const { id_usuario, id_projeto } = req.params;
 
     try {
-        const resultado = await ProjetoDevs.destroy({
+        // Delete project-developer relationship
+        await ProjetoDevs.destroy({
             where: { id_usuario, id_projeto },
         });
 
-        if (resultado === 0) {
-            return res.status(404).json({ error: "Projeto não encontrado para o usuário" });
+        // Delete project-keyword relationships
+        await ProjetoPalavraChave.destroy({
+            where: { id_projeto },
+        });
+
+        // Delete the project itself
+        const projetoExcluido = await Projeto.destroy({
+            where: { id_projeto },
+        });
+
+        if (projetoExcluido === 0) {
+            return res.status(404).json({ error: "Projeto não encontrado" });
         }
 
         res.status(200).json({ message: "Projeto excluído com sucesso" });

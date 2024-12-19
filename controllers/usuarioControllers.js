@@ -206,17 +206,14 @@ exports.excluirProjeto = async (req, res) => {
     const { id_usuario, id_projeto } = req.params;
 
     try {
-        // Delete project-developer relationship
         await ProjetoDevs.destroy({
             where: { id_usuario, id_projeto },
         });
 
-        // Delete project-keyword relationships
         await ProjetoPalavraChave.destroy({
             where: { id_projeto },
         });
 
-        // Delete the project itself
         const projetoExcluido = await Projeto.destroy({
             where: { id_projeto },
         });
@@ -254,14 +251,12 @@ exports.criarProjeto = async (req, res) => {
     const { id_usuario } = req.params;
 
     try {
-        // Create the project
         const novoProjeto = await Projeto.create({
             nome_projeto,
             resumo_projeto,
             link_externo
         });
 
-        // Create the project-developer relationship
         await ProjetoDevs.create({
             id_projeto: novoProjeto.id_projeto,
             id_usuario: parseInt(id_usuario)

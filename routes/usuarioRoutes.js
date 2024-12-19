@@ -14,19 +14,16 @@ router.post("/projeto/:id_projeto/add-pessoa", /*authenticator.validaToken,*/ us
 router.post("/:id_usuario/projeto", /*authenticator.validaToken,*/ usuarioControllers.criarProjeto);
 router.get('/perfil/*', async (req, res) => {
     try {
-        const urlPartes = req.originalUrl.split('/'); // Divide a URL
-        const id = urlPartes[urlPartes.length - 1];  // Pega a última parte
+        const urlPartes = req.originalUrl.split('/'); 
+        const id = urlPartes[urlPartes.length - 1];  
         console.log("ID recebido:", id);
 
-        // Passa o ID para o controlador
         const dadosUsuario = await usuarioControllers.getUsuarioComProjetos({ params: { id } });
 
-        // Verifique se os dados foram recebidos corretamente
         if (!dadosUsuario || !dadosUsuario.usuario) {
             return res.status(404).send("Usuário não encontrado");
         }
 
-        // Renderiza a página do perfil
         res.render('perfil', { usuario: dadosUsuario.usuario, projetos: dadosUsuario.projetos });
     } catch (error) {
         console.error("Erro ao carregar o perfil:", error);

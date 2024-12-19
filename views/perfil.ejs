@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,13 +86,11 @@
         }
     
         function cadastrarProjeto() {
-            // Clear form fields
             document.getElementById("projetoId").value = "";
             document.getElementById("nomeProjeto").value = "";
             document.getElementById("resumoProjeto").value = "";
             document.getElementById("linkExterno").value = "";
             
-            // Show modal
             new bootstrap.Modal(document.getElementById("modalEditarProjeto")).show();
         }
 
@@ -103,7 +101,6 @@
             const resumoProjeto = document.getElementById("resumoProjeto").value;
             const linkExterno = document.getElementById("linkExterno").value;
     
-            // If projetoId is empty, it's a new project
             const method = projetoId ? "PUT" : "POST";
             const url = projetoId 
                 ? `/usuario/<%= usuario.id_usuario %>/projeto/${projetoId}`

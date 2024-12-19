@@ -115,10 +115,8 @@
                     messageEl.className = 'success-message';
                     messageEl.textContent = data.message;
 
-                    // Salvar o token em localStorage (agora a resposta tem o token no corpo)
                     localStorage.setItem('token', data.token);
 
-                    // Redirecionar para a página de perfil com o ID do usuário
                     window.location.href = `http://localhost:8081/usuario/perfil/${data.id_usuario}`;
                 } else {
                     messageEl.style.display = 'block';

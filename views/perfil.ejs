@@ -73,7 +73,7 @@
 
     <script>
         function editarProjeto(id) {
-            fetch(`/projeto/${id}`)
+            fetch(`/usuario/<%= usuario.id_usuario %>/projeto/${id}`)
                 .then(response => response.json())
                 .then(data => {
                     document.getElementById("projetoId").value = data.id_projeto;
@@ -92,7 +92,7 @@
             const resumoProjeto = document.getElementById("resumoProjeto").value;
             const linkExterno = document.getElementById("linkExterno").value;
     
-            fetch(`/projeto/${projetoId}`, {
+            fetch(`/usuario/projeto/${projetoId}`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json"
@@ -115,7 +115,7 @@
     
         function excluirProjeto(id) {
             if (confirm("Tem certeza que deseja excluir este projeto?")) {
-                fetch(`/projeto/${id}`, {
+                fetch(`/usuario/<%= usuario.id_usuario %>/projeto/${id}`, {
                     method: "DELETE"
                 })
                     .then(response => {

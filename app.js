@@ -17,7 +17,6 @@ app.set('view engine', 'ejs')
 app.set('views', path.join(__dirname, 'views'))
 
 app.use("/", routerProjeto)
-app.use("/projeto", routerProjeto)
 
 app.use("/palavra-chave", routerPalavraChave)
 
@@ -33,8 +32,6 @@ app.get('/login', (req, res) => {
   });
 
 app.use("/perfil", routerUsuario);
-app.use("/usuario", routerUsuario);
-
 
 sequelize.authenticate()
     .then(() => {

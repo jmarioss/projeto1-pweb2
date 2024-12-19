@@ -42,7 +42,6 @@
         </div>
     </div>
 
-    <!-- Modal para Editar Projeto -->
     <div class="modal" id="modalEditarProjeto" tabindex="-1" aria-labelledby="editarProjetoLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -72,38 +71,69 @@
         </div>
     </div>
 
-    <!-- Scripts -->
     <script>
-        // Lógica para abrir o modal de edição com os dados do projeto
         function editarProjeto(id) {
-            console.log("Editar projeto:", id);
-            // Adicione aqui a lógica para buscar os dados do projeto e preencher o formulário
+            fetch(`/projeto/${id}`)
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("projetoId").value = data.id_projeto;
+                    document.getElementById("nomeProjeto").value = data.nome_projeto;
+                    document.getElementById("resumoProjeto").value = data.resumo_projeto;
+                    document.getElementById("linkExterno").value = data.link_externo;
+                    new bootstrap.Modal(document.getElementById("modalEditarProjeto")).show();
+                })
+                .catch(err => console.error("Erro ao carregar projeto:", err));
         }
-
-        // Lógica para adicionar um participante ao projeto
-        function adicionarParticipante(id) {
-            console.log("Adicionar participante ao projeto:", id);
-            // Adicione aqui a lógica para exibir o modal ou outra interface
-        }
-
-        // Lógica para excluir um projeto
+    
+        document.getElementById("formEditarProjeto").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const projetoId = document.getElementById("projetoId").value;
+            const nomeProjeto = document.getElementById("nomeProjeto").value;
+            const resumoProjeto = document.getElementById("resumoProjeto").value;
+            const linkExterno = document.getElementById("linkExterno").value;
+    
+            fetch(`/projeto/${projetoId}`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    nome_projeto: nomeProjeto,
+                    resumo_projeto: resumoProjeto,
+                    link_externo: linkExterno
+                })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        location.reload();
+                    } else {
+                        console.error("Erro ao salvar projeto");
+                    }
+                })
+                .catch(err => console.error("Erro:", err));
+        });
+    
         function excluirProjeto(id) {
-            console.log("Excluir projeto:", id);
-            // Adicione aqui a chamada para excluir o projeto (via fetch ou AJAX)
+            if (confirm("Tem certeza que deseja excluir este projeto?")) {
+                fetch(`/projeto/${id}`, {
+                    method: "DELETE"
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            location.reload(); 
+                        } else {
+                            console.error("Erro ao excluir projeto");
+                        }
+                    })
+                    .catch(err => console.error("Erro:", err));
+            }
         }
-
-        // Lógica para exibir o modal de cadastro de um novo projeto
+    
         function cadastrarProjeto() {
             console.log("Cadastrar novo projeto");
-            // Exiba um modal para o cadastro
+            new bootstrap.Modal(document.getElementById("modalEditarProjeto")).show();
         }
-
-        // Lógica para editar habilidades do usuário
-        function editarHabilidades() {
-            console.log("Editar habilidades do usuário");
-            // Exiba o modal ou redirecione para outra página
-        }
-    </script>
+    </script>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -28,7 +28,7 @@ exports.login = async ( req, res ) => {
         res.status(200).json({
             message: "Login bem-sucedido",
             token: token,
-            id_usuario: usuario.id_usuario // Envia o ID do usuário também
+            id_usuario: usuario.id_usuario 
         });
     }catch(error){
         res.status(401).json({error: 'Não foi possível fazer login', details: error.message})
@@ -71,7 +71,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
     try {
         console.log("ID do usuário recebido:", id);
 
-        // Buscar o usuário
         const usuario = await Usuario.findByPk(id, {
             attributes: ["id_usuario", "nome_usuario", "email"],
         });
@@ -80,7 +79,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             return res.status(404).json({ error: "Usuário não encontrado" });
         }
 
-        // Buscar IDs dos projetos do usuário
         const projetosDeUsuario = await ProjetoDevs.findAll({
             where: { id_usuario: id },
             attributes: ["id_projeto"],
@@ -88,7 +86,7 @@ exports.getUsuarioComProjetos = async (req, res) => {
 
         let idsProjetos = projetosDeUsuario.map(p => p.id_projeto);
         if (idsProjetos.length === 0) {
-            idsProjetos = []; // Se não houver projetos, passar uma lista vazia
+            idsProjetos = []; 
         }
 
         const projetos = idsProjetos.length > 0 ? await Projeto.findAll({
@@ -96,7 +94,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             attributes: ["id_projeto", "nome_projeto", "resumo_projeto", "link_externo"],
         }) : [];
 
-        // Buscar conhecimentos do usuário
         const conhecimentosDoUsuario = await UsuarioConhecimento.findAll({
             where: { id_usuario: id },
             attributes: ["id_conhecimento", "nivel"],
@@ -104,7 +101,7 @@ exports.getUsuarioComProjetos = async (req, res) => {
 
         let idsConhecimentos = conhecimentosDoUsuario.map(c => c.id_conhecimento);
         if (idsConhecimentos.length === 0) {
-            idsConhecimentos = []; // Se não houver conhecimentos, passar uma lista vazia
+            idsConhecimentos = []; 
         }
 
         const conhecimentos = idsConhecimentos.length > 0 ? await Conhecimento.findAll({
@@ -112,7 +109,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             attributes: ["id_conhecimento", "nome"],
         }) : [];
 
-        // Associar níveis manualmente aos conhecimentos
         const conhecimentosComNivel = conhecimentos.length > 0 ? conhecimentos.map(c => {
             const relacao = conhecimentosDoUsuario.find(r => r.id_conhecimento === c.id_conhecimento);
             return {
@@ -122,11 +118,10 @@ exports.getUsuarioComProjetos = async (req, res) => {
             };
         }) : [];
 
-        // Retornar os dados estruturados para a página
         return {
-            usuario: usuario || {}, // Verifique se usuario está presente
-            projetos: projetos || [], // Verifique se projetos está presente
-            conhecimentos: conhecimentosComNivel || [], // Verifique se conhecimentosComNivel está presente
+            usuario: usuario || {}, 
+            projetos: projetos || [], 
+            conhecimentos: conhecimentosComNivel || [], 
         };
     } catch (error) {
         console.error("Erro ao buscar dados do usuário:", {
@@ -140,27 +135,19 @@ exports.getUsuarioComProjetos = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
 exports.adicionarConhecimento = async (req, res) => {
     const { id_usuario } = req.params;
     const { nome_conhecimento, nivel } = req.body;
 
     try {
-        // Buscar ou criar o conhecimento
         let conhecimento = await Conhecimento.findOne({
-            where: { nome_conhecimento },
+            where: { nome: nome_conhecimento },
         });
 
         if (!conhecimento) {
             conhecimento = await Conhecimento.create({ nome_conhecimento });
         }
 
-        // Associar o conhecimento ao usuário na tabela intermediária
         await UsuarioConhecimento.create({
             id_usuario,
             id_conhecimento: conhecimento.id_conhecimento,
@@ -178,14 +165,12 @@ exports.editarProjeto = async (req, res) => {
     const { nome_projeto, resumo_projeto, link_externo } = req.body;
 
     try {
-        // Buscar projeto pelo ID
         const projeto = await Projeto.findOne({ where: { id_projeto } });
 
         if (!projeto) {
             return res.status(404).json({ error: "Projeto não encontrado" });
         }
 
-        // Atualizar os campos manualmente
         projeto.nome_projeto = nome_projeto || projeto.nome_projeto;
         projeto.resumo_projeto = resumo_projeto || projeto.resumo_projeto;
         projeto.link_externo = link_externo || projeto.link_externo;
@@ -202,7 +187,6 @@ exports.excluirConhecimento = async (req, res) => {
     const { id_usuario, id_conhecimento } = req.params;
 
     try {
-        // Remover a associação na tabela intermediária
         const resultado = await UsuarioConhecimento.destroy({
             where: { id_usuario, id_conhecimento },
         });
@@ -217,18 +201,34 @@ exports.excluirConhecimento = async (req, res) => {
     }
 };
 
+exports.excluirProjeto = async (req, res) => {
+    const { id_usuario, id_projeto } = req.params;
+
+    try {
+        const resultado = await ProjetoDevs.destroy({
+            where: { id_usuario, id_projeto },
+        });
+
+        if (resultado === 0) {
+            return res.status(404).json({ error: "Projeto não encontrado para o usuário" });
+        }
+
+        res.status(200).json({ message: "Projeto excluído com sucesso" });
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao excluir projeto", details: error.message });
+    }
+};
+
 exports.adicionarPessoaAoProjeto = async (req, res) => {
     const { id_projeto } = req.params;
     const { id_usuario } = req.body;
 
     try {
-        // Verificar se o projeto existe
         const projeto = await Projeto.findOne({ where: { id_projeto } });
         if (!projeto) {
             return res.status(404).json({ error: "Projeto não encontrado" });
         }
 
-        // Associar usuário ao projeto manualmente na tabela intermediária
         await ProjetoDevs.create({ id_projeto, id_usuario });
 
         res.status(201).json({ message: "Pessoa adicionada ao projeto com sucesso" });

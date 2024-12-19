@@ -1,6 +1,10 @@
 const jwt = require("jsonwebtoken")
 const bcrypt = require("bcrypt")
 const Usuario = require("../models/usuarioModels")
+const ProjetoDevs = require("../models/projeto_desenvolvedoresModels")
+const Projeto = require("../models/projetoModels")
+const UsuarioConhecimento = require("../models/usuario_conhecimentoModels")
+const Conhecimento = require("../models/conhecimentoModels")
 
 exports.login = async ( req, res ) => {
     const { email, senha } = req.body
@@ -23,7 +27,7 @@ exports.login = async ( req, res ) => {
         )
         res.status(200).json({
             message: "Login bem-sucedido",
-            token: `Bearer ${token}`,
+            token: token,
             id_usuario: usuario.id_usuario // Envia o ID do usuário também
         });
     }catch(error){
@@ -62,11 +66,13 @@ exports.cadastrar = async ( req, res ) => {
 }
 
 exports.getUsuarioComProjetos = async (req, res) => {
-    const { id_usuario } = req.params;
-
+    const { id } = req.params;
+    console.log(id);
     try {
+        console.log("ID do usuário recebido:", id);
+
         // Buscar o usuário
-        const usuario = await Usuario.findByPk(id_usuario, {
+        const usuario = await Usuario.findByPk(id, {
             attributes: ["id_usuario", "nome_usuario", "email"],
         });
 
@@ -74,57 +80,70 @@ exports.getUsuarioComProjetos = async (req, res) => {
             return res.status(404).json({ error: "Usuário não encontrado" });
         }
 
-        // Buscar IDs dos projetos do usuário na tabela intermediária
+        // Buscar IDs dos projetos do usuário
         const projetosDeUsuario = await ProjetoDevs.findAll({
-            where: { id_usuario },
+            where: { id_usuario: id },
             attributes: ["id_projeto"],
         });
 
-        const idsProjetos = projetosDeUsuario.map(p => p.id_projeto);
+        let idsProjetos = projetosDeUsuario.map(p => p.id_projeto);
+        if (idsProjetos.length === 0) {
+            idsProjetos = []; // Se não houver projetos, passar uma lista vazia
+        }
 
-        // Buscar os projetos associados
-        const projetos = await Projeto.findAll({
+        const projetos = idsProjetos.length > 0 ? await Projeto.findAll({
             where: { id_projeto: idsProjetos },
             attributes: ["id_projeto", "nome_projeto", "resumo_projeto", "link_externo"],
-        });
+        }) : [];
 
-        // Buscar conhecimentos do usuário na tabela intermediária
+        // Buscar conhecimentos do usuário
         const conhecimentosDoUsuario = await UsuarioConhecimento.findAll({
-            where: { id_usuario },
+            where: { id_usuario: id },
             attributes: ["id_conhecimento", "nivel"],
         });
 
-        const idsConhecimentos = conhecimentosDoUsuario.map(c => c.id_conhecimento);
+        let idsConhecimentos = conhecimentosDoUsuario.map(c => c.id_conhecimento);
+        if (idsConhecimentos.length === 0) {
+            idsConhecimentos = []; // Se não houver conhecimentos, passar uma lista vazia
+        }
 
-        // Buscar detalhes dos conhecimentos
-        const conhecimentos = await Conhecimento.findAll({
+        const conhecimentos = idsConhecimentos.length > 0 ? await Conhecimento.findAll({
             where: { id_conhecimento: idsConhecimentos },
-            attributes: ["id_conhecimento", "nome_conhecimento"],
-        });
+            attributes: ["id_conhecimento", "nome"],
+        }) : [];
 
         // Associar níveis manualmente aos conhecimentos
-        const conhecimentosComNivel = conhecimentos.map(c => {
+        const conhecimentosComNivel = conhecimentos.length > 0 ? conhecimentos.map(c => {
             const relacao = conhecimentosDoUsuario.find(r => r.id_conhecimento === c.id_conhecimento);
             return {
                 id_conhecimento: c.id_conhecimento,
-                nome_conhecimento: c.nome_conhecimento,
-                nivel: relacao.nivel,
+                nome_conhecimento: c.nome,
+                nivel: relacao ? relacao.nivel : null,
             };
-        });
+        }) : [];
 
-        // Montar a resposta
-        res.status(200).json({
-            usuario,
-            projetos,
-            conhecimentos: conhecimentosComNivel,
-        });
+        // Retornar os dados estruturados para a página
+        return {
+            usuario: usuario || {}, // Verifique se usuario está presente
+            projetos: projetos || [], // Verifique se projetos está presente
+            conhecimentos: conhecimentosComNivel || [], // Verifique se conhecimentosComNivel está presente
+        };
     } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", {
+            mensagem: error.message,
+            stack: error.stack,
+        });
         res.status(500).json({
             error: "Não foi possível buscar os dados do usuário",
             details: error.message,
         });
     }
 };
+
+
+
+
+
 
 
 exports.adicionarConhecimento = async (req, res) => {

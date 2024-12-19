@@ -32,12 +32,9 @@ app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, './views/login.html'));
   });
 
-app.get('/perfil/:id_usuario', (req, res) => {
-    const id_usuario = req.params.id_usuario;
+app.use("/perfil", routerUsuario);
+app.use("/usuario", routerUsuario);
 
-    // Se for necessário, você pode buscar mais informações no banco de dados sobre o usuário
-    res.sendFile(path.join(__dirname,  './views/perfil.html')); // Serve o arquivo perfil.html
-});
 
 sequelize.authenticate()
     .then(() => {

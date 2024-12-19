@@ -9,7 +9,7 @@ router.get("/:id_usuario", /*authenticator.validaToken,*/ usuarioControllers.get
 router.put("/projeto/:id_projeto", /*authenticator.validaToken,*/ usuarioControllers.editarProjeto);
 router.post("/:id_usuario/conhecimento", /*authenticator.validaToken,*/ usuarioControllers.adicionarConhecimento);
 router.delete("/:id_usuario/conhecimento/:id_conhecimento", /*authenticator.validaToken,*/ usuarioControllers.excluirConhecimento);
-router.delete(":id_usuario/projeto/:id_projeto", usuarioControllers.excluirProjeto)
+router.delete("/:id_usuario/projeto/:id_projeto", usuarioControllers.excluirProjeto)
 router.post("/projeto/:id_projeto/add-pessoa", /*authenticator.validaToken,*/ usuarioControllers.adicionarPessoaAoProjeto);
 router.get('/perfil/*', async (req, res) => {
     try {

@@ -85,6 +85,17 @@
                 .catch(err => console.error("Erro ao carregar projeto:", err));
         }
     
+        function cadastrarProjeto() {
+            // Clear form fields
+            document.getElementById("projetoId").value = "";
+            document.getElementById("nomeProjeto").value = "";
+            document.getElementById("resumoProjeto").value = "";
+            document.getElementById("linkExterno").value = "";
+            
+            // Show modal
+            new bootstrap.Modal(document.getElementById("modalEditarProjeto")).show();
+        }
+
         document.getElementById("formEditarProjeto").addEventListener("submit", function (e) {
             e.preventDefault();
             const projetoId = document.getElementById("projetoId").value;
@@ -92,8 +103,14 @@
             const resumoProjeto = document.getElementById("resumoProjeto").value;
             const linkExterno = document.getElementById("linkExterno").value;
     
-            fetch(`/usuario/projeto/${projetoId}`, {
-                method: "PUT",
+            // If projetoId is empty, it's a new project
+            const method = projetoId ? "PUT" : "POST";
+            const url = projetoId 
+                ? `/usuario/<%= usuario.id_usuario %>/projeto/${projetoId}`
+                : `/usuario/<%= usuario.id_usuario %>/projeto`;
+    
+            fetch(url, {
+                method: method,
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -103,14 +120,14 @@
                     link_externo: linkExterno
                 })
             })
-                .then(response => {
-                    if (response.ok) {
-                        location.reload();
-                    } else {
-                        console.error("Erro ao salvar projeto");
-                    }
-                })
-                .catch(err => console.error("Erro:", err));
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    console.error("Erro ao salvar projeto");
+                }
+            })
+            .catch(err => console.error("Erro:", err));
         });
     
         function excluirProjeto(id) {
@@ -127,11 +144,6 @@
                     })
                     .catch(err => console.error("Erro:", err));
             }
-        }
-    
-        function cadastrarProjeto() {
-            console.log("Cadastrar novo projeto");
-            new bootstrap.Modal(document.getElementById("modalEditarProjeto")).show();
         }
     </script>    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

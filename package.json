@@ -4,11 +4,12 @@
   "description": "Projeto 1 - Web 2",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/jmarioss/projeto1-pweb2.git"
+    "url": "https://github.com/jmarioss/projeto1-pweb2.git"
   },
   "keywords": [
     "node",
@@ -16,8 +17,18 @@
     "backend",
     "endpoint"
   ],
-  "author": "Jose Mario & Luis Miguel",
-  "license": "ISC",
+  "authors": [
+    {
+      "name": "Jose Mario da Silva Santos",
+      "email": "josemario@alunos.utfpr.edu.br",
+      "url": "https://github.com/jmarioss"
+    },
+    {
+      "name": "Luis Miguel",
+      "url": "https://github.com/luismiguel"
+    }
+  ],
+  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/jmarioss/projeto1-pweb2/issues"
   },

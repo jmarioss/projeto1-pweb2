@@ -6,11 +6,12 @@ const authenticator = require("../Middleware/usuarioMiddleware")
 router.post("/entrar", usuarioControllers.login)
 router.post("/cadastrar/create", /*authenticator.validaAdmin,*/ usuarioControllers.cadastrar)
 router.get("/:id_usuario", /*authenticator.validaToken,*/ usuarioControllers.getUsuarioComProjetos);
-router.put("/projeto/:id_projeto", /*authenticator.validaToken,*/ usuarioControllers.editarProjeto);
+router.put("/:id_usuario/projeto/:id_projeto", /*authenticator.validaToken,*/ usuarioControllers.editarProjeto);
 router.post("/:id_usuario/conhecimento", /*authenticator.validaToken,*/ usuarioControllers.adicionarConhecimento);
 router.delete("/:id_usuario/conhecimento/:id_conhecimento", /*authenticator.validaToken,*/ usuarioControllers.excluirConhecimento);
 router.delete("/:id_usuario/projeto/:id_projeto", usuarioControllers.excluirProjeto)
 router.post("/projeto/:id_projeto/add-pessoa", /*authenticator.validaToken,*/ usuarioControllers.adicionarPessoaAoProjeto);
+router.post("/:id_usuario/projeto", /*authenticator.validaToken,*/ usuarioControllers.criarProjeto);
 router.get('/perfil/*', async (req, res) => {
     try {
         const urlPartes = req.originalUrl.split('/'); // Divide a URL

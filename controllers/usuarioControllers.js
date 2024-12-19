@@ -248,3 +248,33 @@ exports.adicionarPessoaAoProjeto = async (req, res) => {
         res.status(500).json({ error: "Erro ao adicionar pessoa ao projeto", details: error.message });
     }
 };
+
+exports.criarProjeto = async (req, res) => {
+    const { nome_projeto, resumo_projeto, link_externo } = req.body;
+    const { id_usuario } = req.params;
+
+    try {
+        // Create the project
+        const novoProjeto = await Projeto.create({
+            nome_projeto,
+            resumo_projeto,
+            link_externo
+        });
+
+        // Create the project-developer relationship
+        await ProjetoDevs.create({
+            id_projeto: novoProjeto.id_projeto,
+            id_usuario: parseInt(id_usuario)
+        });
+
+        res.status(201).json({ 
+            message: "Projeto criado com sucesso", 
+            projeto: novoProjeto 
+        });
+    } catch (error) {
+        res.status(500).json({ 
+            error: "Erro ao criar projeto", 
+            details: error.message 
+        });
+    }
+};

@@ -2,6 +2,28 @@
 
 Sistema de Gerenciamento de Projetos e Desenvolvedores desenvolvido para a disciplina de Programação Web 2 da UTFPR.
 
+## 👥 Autores
+
+### Jose Mario da Silva Santos
+- GitHub: [@jmarioss](https://github.com/jmarioss)
+- Email: josemario@alunos.utfpr.edu.br
+- RA: 2523825
+
+### Luis Miguel
+- GitHub: [@luismiguel](https://github.com/luismiguel)
+- Email: lmiguel@alunos.utfpr.com.br
+- RA: 2523884## 👥 Autores
+
+### Jose Mario da Silva Santos
+- GitHub: [@jmarioss](https://github.com/jmarioss)
+- Email: josemario@alunos.utfpr.edu.br
+- RA: 2523825
+
+### Luis Miguel
+- GitHub: [@luismiguel](https://github.com/luismiguel)
+- Email: lmiguel@alunos.utfpr.com.br
+- RA: 2523884
+
 ## 🚀 Funcionalidades
 
 - **Autenticação de Usuários**
@@ -88,15 +110,6 @@ node app.js
 - `PUT /usuario/:id_usuario/projeto/:id_projeto` - Editar projeto
 - `DELETE /usuario/:id_usuario/projeto/:id_projeto` - Excluir projeto
 - `POST /usuario/projeto/:id_projeto/add-pessoa` - Adicionar participante
-
-## 👥 Autores
-
-### Jose Mario da Silva Santos
-- GitHub: [@jmarioss](https://github.com/jmarioss)
-- Email: josemario@alunos.utfpr.edu.br
-
-### Luis Miguel
-- GitHub: [@luismiguel](https://github.com/luismiguel)
 
 ## 📄 Licença
 

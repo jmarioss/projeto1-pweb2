@@ -5,30 +5,14 @@ const authenticator = require("../Middleware/usuarioMiddleware")
 
 router.post("/entrar", usuarioControllers.login)
 router.post("/cadastrar/create", /*authenticator.validaAdmin,*/ usuarioControllers.cadastrar)
-router.get("/:id_usuario", /*authenticator.validaToken,*/ usuarioControllers.getUsuarioComProjetos);
-router.put("/:id_usuario/projeto/:id_projeto", /*authenticator.validaToken,*/ usuarioControllers.editarProjeto);
-router.post("/:id_usuario/conhecimento", /*authenticator.validaToken,*/ usuarioControllers.adicionarConhecimento);
-router.delete("/:id_usuario/conhecimento/:id_conhecimento", /*authenticator.validaToken,*/ usuarioControllers.excluirConhecimento);
+router.get("/perfil/:id", /*authenticator.validaToken,*/ usuarioControllers.getUsuarioComProjetos)
+router.get("/:id_usuario/projeto/:id_projeto", /*authenticator.validaToken,*/ usuarioControllers.getProjeto)
+router.put("/:id_usuario/projeto/:id_projeto", /*authenticator.validaToken,*/ usuarioControllers.editarProjeto)
+router.post("/:id_usuario/conhecimento", /*authenticator.validaToken,*/ usuarioControllers.adicionarConhecimento)
+router.put("/:id_usuario/conhecimento/:id_conhecimento", /*authenticator.validaToken,*/ usuarioControllers.atualizarNivelConhecimento)
+router.delete("/:id_usuario/conhecimento/:id_conhecimento", /*authenticator.validaToken,*/ usuarioControllers.excluirConhecimento)
 router.delete("/:id_usuario/projeto/:id_projeto", usuarioControllers.excluirProjeto)
-router.post("/projeto/:id_projeto/add-pessoa", /*authenticator.validaToken,*/ usuarioControllers.adicionarPessoaAoProjeto);
-router.post("/:id_usuario/projeto", /*authenticator.validaToken,*/ usuarioControllers.criarProjeto);
-router.get('/perfil/*', async (req, res) => {
-    try {
-        const urlPartes = req.originalUrl.split('/'); 
-        const id = urlPartes[urlPartes.length - 1];  
-        console.log("ID recebido:", id);
-
-        const dadosUsuario = await usuarioControllers.getUsuarioComProjetos({ params: { id } });
-
-        if (!dadosUsuario || !dadosUsuario.usuario) {
-            return res.status(404).send("Usuário não encontrado");
-        }
-
-        res.render('perfil', { usuario: dadosUsuario.usuario, projetos: dadosUsuario.projetos });
-    } catch (error) {
-        console.error("Erro ao carregar o perfil:", error);
-        res.status(500).send("Erro ao carregar o perfil do usuário.");
-    }
-});
+router.post("/projeto/:id_projeto/add-pessoa", /*authenticator.validaToken,*/ usuarioControllers.adicionarPessoaAoProjeto)
+router.post("/:id_usuario/projeto", /*authenticator.validaToken,*/ usuarioControllers.criarProjeto)
 
 module.exports = router

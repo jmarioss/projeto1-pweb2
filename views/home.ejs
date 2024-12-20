@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfólio de Projetos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/">Portfólio de Projetos</a>
+                <div class="d-flex">
+                    <a href="/login" class="btn btn-primary me-2">Login</a>
+                    <a href="/usuario/cadastrar" class="btn btn-outline-primary">Cadastrar</a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Buscar por nome do projeto ou palavra-chave" id="searchInput">
+                    <button class="btn btn-primary" onclick="buscarProjetos()">Buscar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="listaProjetos" class="row">
+            <% if (projetos && projetos.length > 0) { %>
+                <% projetos.forEach(projeto => { %>
+                    <div class="col-md-6 mb-4">
+                        <div class="card">
+                            <div class="card-body">
+                                <h5 class="card-title"><%= projeto.nome_projeto %></h5>
+                                <p class="card-text"><%= projeto.resumo_projeto %></p>
+                                <% if (projeto.palavras_chave && projeto.palavras_chave.length > 0) { %>
+                                    <div class="mb-2">
+                                        <strong>Palavras-chave:</strong>
+                                        <% projeto.palavras_chave.forEach(palavra => { %>
+                                            <span class="badge bg-secondary me-1"><%= palavra %></span>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+                                <% if (projeto.usuarios && projeto.usuarios.length > 0) { %>
+                                    <div class="mb-2">
+                                        <strong>Desenvolvedores:</strong>
+                                        <% projeto.usuarios.forEach(usuario => { %>
+                                            <a href="/usuario/perfil/<%= usuario.id_usuario %>" class="badge bg-info text-dark me-1"><%= usuario.nome_usuario %></a>
+                                        <% }) %>
+                                    </div>
+                                <% } %>
+                                <a href="<%= projeto.link_externo %>" target="_blank" class="btn btn-primary">Ver Projeto</a>
+                            </div>
+                        </div>
+                    </div>
+                <% }) %>
+            <% } else { %>
+                <div class="col-12">
+                    <p class="text-center">Nenhum projeto encontrado.</p>
+                </div>
+            <% } %>
+        </div>
+    </div>
+
+    <script>
+        function buscarProjetos() {
+            const searchTerm = document.getElementById('searchInput').value;
+            
+            fetch(`/projetos/buscar-publico?q=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('listaProjetos');
+                    container.innerHTML = '';
+
+                    if (data.length === 0) {
+                        container.innerHTML = '<div class="col-12"><p class="text-center">Nenhum projeto encontrado.</p></div>';
+                        return;
+                    }
+
+                    data.forEach(projeto => {
+                        const usuariosHtml = projeto.usuarios && projeto.usuarios.length > 0 
+                            ? `<div class="mb-2">
+                                <strong>Desenvolvedores:</strong>
+                                ${projeto.usuarios.map(usuario => 
+                                    `<a href="/usuario/perfil/${usuario.id_usuario}" class="badge bg-info text-dark me-1">${usuario.nome_usuario}</a>`
+                                ).join('')}
+                               </div>`
+                            : '';
+
+                        const projetoHtml = `
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${projeto.nome_projeto}</h5>
+                                        <p class="card-text">${projeto.resumo_projeto}</p>
+                                        ${projeto.palavras_chave && projeto.palavras_chave.length > 0 ? `
+                                            <div class="mb-2">
+                                                <strong>Palavras-chave:</strong>
+                                                ${projeto.palavras_chave.map(palavra => 
+                                                    `<span class="badge bg-secondary me-1">${palavra}</span>`
+                                                ).join('')}
+                                            </div>
+                                        ` : ''}
+                                        ${usuariosHtml}
+                                        <a href="${projeto.link_externo}" target="_blank" class="btn btn-primary">Ver Projeto</a>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += projetoHtml;
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro na busca:', error);
+                    alert('Erro ao buscar projetos');
+                });
+        }
+
+        // Adiciona evento de busca ao pressionar Enter
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarProjetos();
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

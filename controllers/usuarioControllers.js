@@ -68,10 +68,7 @@ exports.cadastrar = async ( req, res ) => {
 
 exports.getUsuarioComProjetos = async (req, res) => {
     const { id } = req.params;
-    console.log(id);
     try {
-        console.log("ID do usuário recebido:", id);
-
         const usuario = await Usuario.findByPk(id, {
             attributes: ["id_usuario", "nome_usuario", "email"],
         });
@@ -86,49 +83,50 @@ exports.getUsuarioComProjetos = async (req, res) => {
         });
 
         let idsProjetos = projetosDeUsuario.map(p => p.id_projeto);
-        if (idsProjetos.length === 0) {
-            idsProjetos = []; 
-        }
-
         const projetos = idsProjetos.length > 0 ? await Projeto.findAll({
             where: { id_projeto: idsProjetos },
             attributes: ["id_projeto", "nome_projeto", "resumo_projeto", "link_externo"],
         }) : [];
 
+        // Buscar conhecimentos do usuário
         const conhecimentosDoUsuario = await UsuarioConhecimento.findAll({
             where: { id_usuario: id },
             attributes: ["id_conhecimento", "nivel"],
+            raw: true
         });
 
-        let idsConhecimentos = conhecimentosDoUsuario.map(c => c.id_conhecimento);
-        if (idsConhecimentos.length === 0) {
-            idsConhecimentos = []; 
-        }
-
-        const conhecimentos = idsConhecimentos.length > 0 ? await Conhecimento.findAll({
+        // Buscar detalhes dos conhecimentos
+        const idsConhecimentos = conhecimentosDoUsuario.map(k => k.id_conhecimento);
+        const conhecimentosDetalhes = await Conhecimento.findAll({
             where: { id_conhecimento: idsConhecimentos },
             attributes: ["id_conhecimento", "nome"],
-        }) : [];
-
-        const conhecimentosComNivel = conhecimentos.length > 0 ? conhecimentos.map(c => {
-            const relacao = conhecimentosDoUsuario.find(r => r.id_conhecimento === c.id_conhecimento);
-            return {
-                id_conhecimento: c.id_conhecimento,
-                nome_conhecimento: c.nome,
-                nivel: relacao ? relacao.nivel : null,
-            };
-        }) : [];
-
-        return {
-            usuario: usuario || {}, 
-            projetos: projetos || [], 
-            conhecimentos: conhecimentosComNivel || [], 
-        };
-    } catch (error) {
-        console.error("Erro ao buscar dados do usuário:", {
-            mensagem: error.message,
-            stack: error.stack,
+            raw: true
         });
+
+        // Combinar os dados
+        const conhecimentos = conhecimentosDoUsuario.map(uc => {
+            const conhecimento = conhecimentosDetalhes.find(c => c.id_conhecimento === uc.id_conhecimento);
+            return {
+                id_conhecimento: uc.id_conhecimento,
+                nome: conhecimento ? conhecimento.nome : '',
+                nivel: uc.nivel
+            };
+        });
+
+        // Buscar todos os conhecimentos disponíveis
+        const todosConhecimentos = await Conhecimento.findAll({
+            attributes: ["id_conhecimento", "nome"],
+            order: [['nome', 'ASC']]
+        });
+
+        res.render('perfil', {
+            usuario: usuario,
+            projetos: projetos,
+            conhecimentos: conhecimentos,
+            todosConhecimentos: todosConhecimentos
+        });
+    } catch (error) {
+        console.error("Erro ao buscar dados do usuário:", error);
         res.status(500).json({
             error: "Não foi possível buscar os dados do usuário",
             details: error.message,
@@ -161,6 +159,25 @@ exports.adicionarConhecimento = async (req, res) => {
     }
 };
 
+exports.getProjeto = async (req, res) => {
+    const { id_projeto } = req.params;
+
+    try {
+        const projeto = await Projeto.findOne({ 
+            where: { id_projeto },
+            attributes: ['id_projeto', 'nome_projeto', 'resumo_projeto', 'link_externo']
+        });
+
+        if (!projeto) {
+            return res.status(404).json({ error: "Projeto não encontrado" });
+        }
+
+        res.status(200).json(projeto);
+    } catch (error) {
+        res.status(500).json({ error: "Erro ao buscar projeto", details: error.message });
+    }
+};
+
 exports.editarProjeto = async (req, res) => {
     const { id_projeto } = req.params;
     const { nome_projeto, resumo_projeto, link_externo } = req.body;
@@ -172,11 +189,11 @@ exports.editarProjeto = async (req, res) => {
             return res.status(404).json({ error: "Projeto não encontrado" });
         }
 
-        projeto.nome_projeto = nome_projeto || projeto.nome_projeto;
-        projeto.resumo_projeto = resumo_projeto || projeto.resumo_projeto;
-        projeto.link_externo = link_externo || projeto.link_externo;
-
-        await projeto.save();
+        await projeto.update({
+            nome_projeto: nome_projeto || projeto.nome_projeto,
+            resumo_projeto: resumo_projeto || projeto.resumo_projeto,
+            link_externo: link_externo || projeto.link_externo
+        });
 
         res.status(200).json({ message: "Projeto atualizado com sucesso", projeto });
     } catch (error) {
@@ -188,17 +205,28 @@ exports.excluirConhecimento = async (req, res) => {
     const { id_usuario, id_conhecimento } = req.params;
 
     try {
-        const resultado = await UsuarioConhecimento.destroy({
-            where: { id_usuario, id_conhecimento },
+        // Verifica se o conhecimento existe para este usuário
+        const conhecimento = await UsuarioConhecimento.findOne({
+            where: {
+                id_usuario: parseInt(id_usuario),
+                id_conhecimento: parseInt(id_conhecimento)
+            }
         });
 
-        if (resultado === 0) {
-            return res.status(404).json({ error: "Conhecimento não encontrado para o usuário" });
+        if (!conhecimento) {
+            return res.status(404).json({ error: "Conhecimento não encontrado para este usuário" });
         }
 
-        res.status(200).json({ message: "Conhecimento excluído com sucesso" });
+        // Se existe, então exclui
+        await conhecimento.destroy();
+        
+        res.status(200).json({ message: "Conhecimento removido com sucesso" });
     } catch (error) {
-        res.status(500).json({ error: "Erro ao excluir conhecimento", details: error.message });
+        console.error("Erro ao excluir conhecimento:", error);
+        res.status(500).json({
+            error: "Não foi possível excluir o conhecimento",
+            details: error.message
+        });
     }
 };
 
@@ -270,6 +298,34 @@ exports.criarProjeto = async (req, res) => {
         res.status(500).json({ 
             error: "Erro ao criar projeto", 
             details: error.message 
+        });
+    }
+};
+
+exports.atualizarNivelConhecimento = async (req, res) => {
+    const { id_usuario, id_conhecimento } = req.params;
+    const { nivel } = req.body;
+
+    try {
+        const conhecimentoUsuario = await UsuarioConhecimento.findOne({
+            where: {
+                id_usuario: id_usuario,
+                id_conhecimento: id_conhecimento
+            }
+        });
+
+        if (!conhecimentoUsuario) {
+            return res.status(404).json({ error: "Conhecimento não encontrado para este usuário" });
+        }
+
+        await conhecimentoUsuario.update({ nivel: nivel });
+
+        res.status(200).json({ message: "Nível de conhecimento atualizado com sucesso" });
+    } catch (error) {
+        console.error("Erro ao atualizar nível de conhecimento:", error);
+        res.status(500).json({
+            error: "Não foi possível atualizar o nível de conhecimento",
+            details: error.message
         });
     }
 };

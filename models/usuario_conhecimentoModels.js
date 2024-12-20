@@ -17,6 +17,7 @@ const UsuarioConhecimento = database.define('UsuarioConhecimento',
                 model: 'Conhecimento',
                 key: 'id_conhecimento',
             },
+            primaryKey: true
         },
         nivel: {
             type: DataTypes.INTEGER,
@@ -26,8 +27,7 @@ const UsuarioConhecimento = database.define('UsuarioConhecimento',
                         throw new Error("Informe um nível válido")
                     }
                 },
-            },
-            primaryKey: true
+            }
         },
     },
     {

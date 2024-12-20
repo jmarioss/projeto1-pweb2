@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meus Projetos</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .card-title {
+            color: #333;
+            font-weight: bold;
+        }
+        .card-text {
+            color: #666;
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <nav class="navbar navbar-expand-lg navbar-light bg-light mb-4">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="/projetos">Meus Projetos</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link" href="/perfil/<%= usuario?.id_usuario %>">Meu Perfil</a>
+                        </li>
+                        <% if (usuario?.tipo === 'administrador') { %>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalCadastrarUsuario">Cadastrar Usuário</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="#" data-bs-toggle="modal" data-bs-target="#modalCadastrarHabilidade">Cadastrar Habilidade</a>
+                            </li>
+                        <% } %>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/projetos/new">Novo Projeto</a>
+                        </li>
+                    </ul>
+                    <form class="d-flex me-3">
+                        <input class="form-control me-2" type="search" placeholder="Buscar usuário..." id="searchUsuario">
+                        <button class="btn btn-outline-success" type="button" onclick="buscarUsuarios()">Buscar</button>
+                    </form>
+                    <button class="btn btn-outline-danger" onclick="logout()">Sair</button>
+                </div>
+            </div>
+        </nav>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="Buscar por nome do projeto ou palavra-chave" id="searchInput">
+                    <button class="btn btn-primary" type="button" onclick="buscarProjetos()">Buscar</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="listaProjetos" class="row">
+            <% projetos.forEach(function(projeto) { %>
+                <div class="col-md-6 mb-4">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title"><%= projeto.nome_projeto %></h5>
+                            <p class="card-text"><%= projeto.resumo_projeto %></p>
+                            
+                            <% if (projeto.Usuarios && projeto.Usuarios.length > 0) { %>
+                                <div class="mb-2">
+                                    <strong>Desenvolvedores:</strong>
+                                    <% projeto.Usuarios.forEach(function(usuario) { %>
+                                        <a href="/usuario/perfil/<%= usuario.id_usuario %>" class="badge bg-info text-dark me-1">
+                                            <%= usuario.nome_usuario %>
+                                        </a>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (projeto.PalavrasChave && projeto.PalavrasChave.length > 0) { %>
+                                <div class="mb-2">
+                                    <strong>Palavras-chave:</strong>
+                                    <% projeto.PalavrasChave.forEach(function(palavra) { %>
+                                        <span class="badge bg-secondary me-1"><%= palavra.nome_palavra_chave %></span>
+                                    <% }); %>
+                                </div>
+                            <% } %>
+
+                            <% if (projeto.link_externo) { %>
+                                <a href="<%= projeto.link_externo %>" class="btn btn-outline-primary btn-sm" target="_blank">
+                                    Link Externo
+                                </a>
+                            <% } %>
+                        </div>
+                    </div>
+                </div>
+            <% }); %>
+        </div>
+    </div>
+
+    <script>
+        function buscarProjetos() {
+            const searchTerm = document.getElementById('searchInput').value;
+            
+            fetch(`/projetos/buscar?q=${encodeURIComponent(searchTerm)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('listaProjetos');
+                    container.innerHTML = '';
+
+                    if (data.length === 0) {
+                        container.innerHTML = '<div class="col-12"><p class="text-center">Nenhum projeto encontrado.</p></div>';
+                        return;
+                    }
+
+                    data.forEach(projeto => {
+                        const usuariosHtml = projeto.usuarios && projeto.usuarios.length > 0 
+                            ? `<div class="mb-2">
+                                <strong>Desenvolvedores:</strong>
+                                ${projeto.usuarios.map(usuario => 
+                                    `<a href="/usuario/perfil/${usuario.id_usuario}" class="badge bg-info text-dark me-1">${usuario.nome_usuario}</a>`
+                                ).join('')}
+                               </div>`
+                            : '';
+
+                        const palavrasChaveHtml = projeto.palavras_chave && projeto.palavras_chave.length > 0
+                            ? `<div class="mb-2">
+                                <strong>Palavras-chave:</strong>
+                                ${projeto.palavras_chave.map(palavra => 
+                                    `<span class="badge bg-secondary me-1">${palavra.nome_palavra_chave}</span>`
+                                ).join('')}
+                               </div>`
+                            : '';
+
+                        const linkHtml = projeto.link_externo
+                            ? `<a href="${projeto.link_externo}" class="btn btn-outline-primary btn-sm" target="_blank">Link Externo</a>`
+                            : '';
+
+                        const projetoHtml = `
+                            <div class="col-md-6 mb-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${projeto.nome_projeto}</h5>
+                                        <p class="card-text">${projeto.resumo_projeto}</p>
+                                        ${usuariosHtml}
+                                        ${palavrasChaveHtml}
+                                        ${linkHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        container.innerHTML += projetoHtml;
+                    });
+                })
+                .catch(error => {
+                    console.error('Erro na busca:', error);
+                    alert('Erro ao buscar projetos');
+                });
+        }
+
+        function buscarUsuarios() {
+            const searchTerm = document.getElementById('searchUsuario').value;
+            window.location.href = `/usuarios/buscar?q=${encodeURIComponent(searchTerm)}`;
+        }
+
+        function logout() {
+            window.location.href = '/login';
+        }
+
+        // Adiciona evento de busca ao pressionar Enter
+        document.getElementById('searchInput')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarProjetos();
+            }
+        });
+
+        document.getElementById('searchUsuario')?.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                buscarUsuarios();
+            }
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

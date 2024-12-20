@@ -49,7 +49,7 @@ const checkAuth = (req, res, next) => {
 
 // Rotas protegidas
 app.use("/usuario", checkAuth, routerUsuario)
-app.use("/projeto/criar", checkAuth, routerProjeto)
+app.use("/projeto", checkAuth, routerProjeto)
 app.use("/palavra-chave", checkAuth, routerPalavraChave)
 app.use("/conhecimento", checkAuth, routerConhecimento)
 app.use("/usuario-conhecimento", checkAuth, routerUsuarioConhecimento)

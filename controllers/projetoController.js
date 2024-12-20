@@ -148,40 +148,37 @@ exports.paginaCriarProjeto = async ( req, res ) => {
     
 }
 
-exports.criar = async ( req, res ) => {
-    const { nome_projeto, resumo, link, id_palavra_chave, id_alunos } = req.body 
-    if(!nome_projeto || !resumo || !link || !id_palavra_chave || !id_alunos){
-        res.status(401).json({error: "Informe todos os campos"})
+exports.criar = async (req, res) => {
+    const { nome_projeto, resumo_projeto, link_externo } = req.body;
+    const id_usuario = req.session.userId;
+
+    if (!nome_projeto || !resumo_projeto) {
+        return res.status(400).json({ error: "Nome e resumo do projeto são obrigatórios" });
     }
-    try{
-        const novoProjeto = await Projeto.create(
-            {
-                nome_projeto: nome_projeto,
-                resumo_projeto: resumo,
-                link_externo: link,
-            }
-        )
-        
-        const  novoProjetoPalavraChave = id_palavra_chave.map((idPalavraChave) => (
-            {
-                id_projeto: novoProjeto.id_projeto,
-                id_palavra_chave: idPalavraChave
-            }
-        )) 
 
-        const novoProjetoDevs = id_alunos.map((idAluno) => (
-            {
-                id_projeto: novoProjeto.id_projeto,
-                id_usuario: idAluno
-            }
-        ))
+    try {
+        // Criar o projeto
+        const novoProjeto = await Projeto.create({
+            nome_projeto,
+            resumo_projeto,
+            link_externo: link_externo || null
+        });
 
-        await ProjetoPalavraChave.bulkCreate(novoProjetoPalavraChave)
-        await ProjetoDevs.bulkCreate(novoProjetoDevs)
+        // Adicionar o usuário como desenvolvedor do projeto
+        await ProjetoDevs.create({
+            id_projeto: novoProjeto.id_projeto,
+            id_usuario: id_usuario
+        });
 
-        res.status(201).json({message: "Projeto criado com sucesso", novoProjeto,})
-
-    }catch(error){
-        res.status(401).json({error: "Não foi possível criar projeto", details: error.message})
+        res.status(201).json({
+            message: "Projeto criado com sucesso",
+            projeto: novoProjeto
+        });
+    } catch (error) {
+        console.error('Erro ao criar projeto:', error);
+        res.status(500).json({
+            error: "Não foi possível criar o projeto",
+            details: error.message
+        });
     }
-}
+};

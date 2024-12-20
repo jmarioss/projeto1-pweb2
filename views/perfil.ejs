@@ -195,16 +195,18 @@
         </div>
 
         <div class="button-container">
-            <a href="/projetos/criar" class="button">Criar Novo Projeto</a>
+            <button type="button" class="button" data-bs-toggle="modal" data-bs-target="#modalNovoProjeto">
+                Criar Novo Projeto
+            </button>
             <a href="/projetos" class="button">Ver Todos os Projetos</a>
             
             <% if (usuario.id_usuario === 1) { %>
                 <div class="admin-section">
                     <h2>Opções de Administrador</h2>
-                    <div class="button-container">
-                        <button onclick="window.location.href='/admin/usuarios/cadastro'" class="button">Cadastrar Usuário</button>
-                        <button onclick="window.location.href='/admin/conhecimentos/cadastro'" class="button">Cadastrar Conhecimento</button>
-                        <button onclick="window.location.href='/admin/palavras-chave/cadastro'" class="button">Cadastrar Palavra-chave</button>
+                    <div class="d-flex gap-2">
+                        <a href="/admin/usuarios/cadastro" class="button">Cadastrar Usuário</a>
+                        <a href="/admin/conhecimentos/cadastro" class="button">Cadastrar Conhecimento</a>
+                        <a href="/admin/palavras-chave/cadastro" class="button">Cadastrar Palavra-chave</a>
                     </div>
                 </div>
             <% } %>
@@ -305,6 +307,38 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                     <button type="button" class="btn btn-primary" onclick="adicionarParticipante()">Adicionar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Novo Projeto -->
+    <div class="modal fade" id="modalNovoProjeto" tabindex="-1" aria-labelledby="modalNovoProjetoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalNovoProjetoLabel">Criar Novo Projeto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="formNovoProjeto">
+                        <div class="mb-3">
+                            <label for="nome_projeto" class="form-label">Nome do Projeto</label>
+                            <input type="text" class="form-control" id="nome_projeto" name="nome_projeto" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="resumo_projeto" class="form-label">Resumo</label>
+                            <textarea class="form-control" id="resumo_projeto" name="resumo_projeto" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="link_externo" class="form-label">Link Externo</label>
+                            <input type="url" class="form-control" id="link_externo" name="link_externo">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-primary" onclick="criarProjeto()">Criar</button>
                 </div>
             </div>
         </div>
@@ -523,6 +557,42 @@
                         alert('Erro ao remover participante');
                     }
                 });
+            }
+        }
+
+        function criarProjeto() {
+            const formData = {
+                nome_projeto: document.getElementById('nome_projeto').value,
+                resumo_projeto: document.getElementById('resumo_projeto').value,
+                link_externo: document.getElementById('link_externo').value
+            };
+
+            fetch('/projeto/new/create', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    response.json().then(data => {
+                        alert(data.error || 'Erro ao criar projeto');
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao criar projeto');
+            });
+
+            // Fecha o modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalNovoProjeto'));
+            if (modal) {
+                modal.hide();
             }
         }
     </script>

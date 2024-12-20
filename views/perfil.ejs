@@ -9,6 +9,73 @@
         .skill-level {
             width: 100px;
         }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        .info-section {
+            margin-bottom: 30px;
+        }
+        .info-section h2 {
+            color: #007bff;
+            margin-bottom: 15px;
+        }
+        .info-item {
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        .button-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .admin-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+        }
+        .admin-section h2 {
+            color: #dc3545;
+            margin-bottom: 15px;
+        }
+        .logout-button {
+            background-color: #dc3545;
+        }
+        .logout-button:hover {
+            background-color: #c82333;
+        }
     </style>
 </head>
 <body>
@@ -43,6 +110,7 @@
                                 <tr>
                                     <td><%= conhecimento.nome %></td>
                                     <td>
+                                        <span id="nivel-atual-<%= conhecimento.id_conhecimento %>" class="me-2">Nível atual: <%= conhecimento.nivel %></span>
                                         <select class="form-select skill-level" 
                                                 onchange="atualizarNivelConhecimento('<%= conhecimento.id_conhecimento %>', this.value)">
                                             <% for(let i = 1; i <= 10; i++) { %>
@@ -124,6 +192,26 @@
                     </div>
                 <% } %>
             </div>
+        </div>
+
+        <div class="button-container">
+            <a href="/projetos/criar" class="button">Criar Novo Projeto</a>
+            <a href="/projetos" class="button">Ver Todos os Projetos</a>
+            
+            <% if (usuario.id_usuario === 1) { %>
+                <div class="admin-section">
+                    <h2>Opções de Administrador</h2>
+                    <div class="button-container">
+                        <button onclick="window.location.href='/admin/usuarios/cadastro'" class="button">Cadastrar Usuário</button>
+                        <button onclick="window.location.href='/admin/conhecimentos/cadastro'" class="button">Cadastrar Conhecimento</button>
+                        <button onclick="window.location.href='/admin/palavras-chave/cadastro'" class="button">Cadastrar Palavra-chave</button>
+                    </div>
+                </div>
+            <% } %>
+
+            <form action="/logout" method="POST" style="margin-left: auto;">
+                <button type="submit" class="button logout-button">Sair</button>
+            </form>
         </div>
     </div>
 
@@ -249,9 +337,21 @@
                 if (response.ok) {
                     location.reload();
                 } else {
-                    alert('Erro ao salvar conhecimento');
+                    response.json().then(data => {
+                        alert(data.error || 'Erro ao salvar conhecimento');
+                    });
                 }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao salvar conhecimento');
             });
+
+            // Fecha o modal
+            const modal = bootstrap.Modal.getInstance(document.getElementById('modalConhecimento'));
+            if (modal) {
+                modal.hide();
+            }
         }
 
         function atualizarNivelConhecimento(conhecimentoId, nivel) {
@@ -264,9 +364,19 @@
                 body: JSON.stringify({ nivel: nivel })
             })
             .then(response => {
-                if (!response.ok) {
+                if (response.ok) {
+                    // Atualiza o texto do nível atual
+                    const nivelSpan = document.querySelector(`#nivel-atual-${conhecimentoId}`);
+                    if (nivelSpan) {
+                        nivelSpan.textContent = `Nível atual: ${nivel}`;
+                    }
+                } else {
                     alert('Erro ao atualizar nível');
                 }
+            })
+            .catch(error => {
+                console.error('Erro:', error);
+                alert('Erro ao atualizar nível');
             });
         }
 
@@ -310,22 +420,26 @@
                     document.getElementById('nomeProjeto').value = projeto.nome_projeto;
                     document.getElementById('resumoProjeto').value = projeto.resumo_projeto;
                     document.getElementById('linkExterno').value = projeto.link_externo || '';
-                    new bootstrap.Modal(document.getElementById('modalProjeto')).show();
+                    
+                    const modal = new bootstrap.Modal(document.getElementById('modalProjeto'));
+                    modal.show();
+                })
+                .catch(error => {
+                    console.error('Erro ao carregar projeto:', error);
+                    alert('Erro ao carregar dados do projeto');
                 });
         }
 
         function salvarProjeto() {
             const projetoId = document.getElementById('projetoId').value;
-            const dados = {
-                nome_projeto: document.getElementById('nomeProjeto').value,
-                resumo_projeto: document.getElementById('resumoProjeto').value,
-                link_externo: document.getElementById('linkExterno').value
-            };
+            const nome = document.getElementById('nomeProjeto').value;
+            const resumo = document.getElementById('resumoProjeto').value;
+            const link = document.getElementById('linkExterno').value;
 
+            const method = projetoId ? 'PUT' : 'POST';
             const url = projetoId 
                 ? `/usuario/<%= usuario.id_usuario %>/projeto/${projetoId}`
                 : `/usuario/<%= usuario.id_usuario %>/projeto`;
-            const method = projetoId ? 'PUT' : 'POST';
 
             fetch(url, {
                 method: method,
@@ -333,7 +447,11 @@
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('token')}`
                 },
-                body: JSON.stringify(dados)
+                body: JSON.stringify({
+                    nome_projeto: nome,
+                    resumo_projeto: resumo,
+                    link_externo: link
+                })
             })
             .then(response => {
                 if (response.ok) {

@@ -81,6 +81,14 @@
             color: #007bff;
             margin-top: 10px;
         }
+        .project-card ul {
+            list-style: none;
+            padding: 0;
+            margin: 5px 0;
+        }
+        .project-card li {
+            margin: 3px 0;
+        }
     </style>
 </head>
 <body>
@@ -90,28 +98,44 @@
     </header>
 
     <div class="search-bar">
-        <input type="text" id="search" placeholder="Pesquise por projetos...">
-        <button onclick="searchProjects()">Pesquisar</button>
+        <form action="/" method="GET" style="display: flex; width: 100%; justify-content: center;">
+            <input 
+                type="text" 
+                name="busca" 
+                placeholder="Busque por projetos ou palavras-chave..."
+                value="<%= locals.termoBusca || '' %>"
+            >
+            <button type="submit">Buscar</button>
+        </form>
     </div>
 
-    <div class="projects" id="projects">
-        <% if (allProject.length > 0) { %>
-            <% allProject.forEach(project => { %>
+    <div class="projects">
+        <% if (projetos && projetos.length > 0) { %>
+            <% projetos.forEach(projeto => { %>
                 <div class="project-card">
-                    <h2><%= project.nome_projeto  %></h2>
+                    <h2><%= projeto.nome_projeto %></h2>
+                    <p><%= projeto.resumo_projeto %></p>
+                    
                     <h3>Desenvolvedores:</h3>
                     <ul>
-                        <% project.Usuarios.forEach(user => { %>
-                            <li><%= user.nome_usuario %> (<%= user.email %>)</li>
-                        <% }) %>
+                        <% if (projeto.desenvolvedores && projeto.desenvolvedores.length > 0) { %>
+                            <% projeto.desenvolvedores.forEach(dev => { %>
+                                <li><%= dev.nome_usuario %> (<%= dev.email %>)</li>
+                            <% }) %>
+                        <% } else { %>
+                            <li>Nenhum desenvolvedor cadastrado</li>
+                        <% } %>
                     </ul>
-                    <% if (project.PalavrasChave && project.PalavrasChave.length > 0) { %>
+
+                    <% if (projeto.palavrasChave && projeto.palavrasChave.length > 0) { %>
                         <div class="keywords">
                             <strong>Palavras-chave:</strong>
-                            <% project.PalavrasChave.forEach(keyword => { %>
-                                <span><%= keyword.nome_palavra_chave %></span>
-                            <% }) %>
+                            <%= projeto.palavrasChave.map(tag => tag.nome_palavra_chave).join(', ') %>
                         </div>
+                    <% } %>
+
+                    <% if (projeto.link_externo) { %>
+                        <p><a href="<%= projeto.link_externo %>" target="_blank">Link do Projeto</a></p>
                     <% } %>
                 </div>
             <% }) %>
@@ -119,23 +143,5 @@
             <p>Nenhum projeto encontrado.</p>
         <% } %>
     </div>
-
-    <script>
-        function searchProjects() {
-            const searchInput = document.getElementById('search').value.toLowerCase();
-            const projectCards = document.querySelectorAll('.project-card');
-
-            projectCards.forEach(card => {
-                const title = card.querySelector('h2').textContent.toLowerCase();
-                const keywords = card.querySelector('.keywords') ? card.querySelector('.keywords').textContent.toLowerCase() : '';
-                
-                if (title.includes(searchInput) || keywords.includes(searchInput)) {
-                    card.style.display = 'block';
-                } else {
-                    card.style.display = 'none';
-                }
-            });
-        }
-    </script>
 </body>
 </html>

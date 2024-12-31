@@ -12,16 +12,6 @@ Sistema de Gerenciamento de Projetos e Desenvolvedores desenvolvido para a disci
 ### Luis Miguel
 - GitHub: [@luismiguel](https://github.com/luismiguel)
 - Email: lmiguel@alunos.utfpr.com.br
-- RA: 2523884## 👥 Autores
-
-### Jose Mario da Silva Santos
-- GitHub: [@jmarioss](https://github.com/jmarioss)
-- Email: josemario@alunos.utfpr.edu.br
-- RA: 2523825
-
-### Luis Miguel
-- GitHub: [@luismiguel](https://github.com/luismiguel)
-- Email: lmiguel@alunos.utfpr.com.br
 - RA: 2523884
 
 ## 🚀 Funcionalidades

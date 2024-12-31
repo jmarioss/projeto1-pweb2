@@ -12,7 +12,6 @@ exports.paginaListarProjetosAll = async (req, res) => {
         let projetos;
 
         if (busca) {
-            // Buscar projetos que correspondam ao termo de busca
             const projetosPorNome = await Projeto.findAll({
                 where: {
                     [Op.or]: [
@@ -23,7 +22,6 @@ exports.paginaListarProjetosAll = async (req, res) => {
                 attributes: ["id_projeto", "nome_projeto", "resumo_projeto", "link_externo"]
             });
 
-            // Buscar projetos por palavras-chave
             const palavrasChave = await PalavraChave.findAll({
                 where: {
                     nome_palavra_chave: { [Op.iLike]: `%${busca}%` }
@@ -45,7 +43,6 @@ exports.paginaListarProjetosAll = async (req, res) => {
                 attributes: ["id_projeto", "nome_projeto", "resumo_projeto", "link_externo"]
             });
 
-            // Combinar resultados e remover duplicatas
             const todosIds = [...new Set([
                 ...projetosPorNome.map(p => p.id_projeto),
                 ...projetosPorPalavras.map(p => p.id_projeto)
@@ -157,14 +154,12 @@ exports.criar = async (req, res) => {
     }
 
     try {
-        // Criar o projeto
         const novoProjeto = await Projeto.create({
             nome_projeto,
             resumo_projeto,
             link_externo: link_externo || null
         });
 
-        // Adicionar o usuário como desenvolvedor do projeto
         await ProjetoDevs.create({
             id_projeto: novoProjeto.id_projeto,
             id_usuario: id_usuario

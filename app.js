@@ -11,14 +11,13 @@ const bodyParser = require("body-parser")
 const sequelize = require('./config/db')
 const session = require('express-session')
 
-// Configuração da sessão - deve vir antes das rotas
 app.use(session({
     secret: 'sua_chave_secreta',
     resave: false,
     saveUninitialized: true,
     cookie: {
-        secure: false, // set to true if using https
-        maxAge: 24 * 60 * 60 * 1000 // 24 horas
+        secure: false, 
+        maxAge: 24 * 60 * 60 * 1000 
     }
 }))
 
@@ -34,12 +33,10 @@ app.use(express.static('public'))
 app.use("/", routerProjeto)
 app.use("/login", routerUsuario)
 
-// Rota estática para página de login
 app.get('/login', (req, res) => {
     res.sendFile(path.join(__dirname, './views/login.html'))
 })
 
-// Middleware para verificar autenticação
 const checkAuth = (req, res, next) => {
     if (!req.session.userId) {
         return res.redirect('/login');

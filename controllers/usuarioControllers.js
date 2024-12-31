@@ -33,7 +33,6 @@ exports.login = async ( req, res ) => {
             { expiresIn: '2h' }
         );
         
-        // Salva o ID do usuário na sessão
         req.session.userId = usuario.id_usuario;
         
         res.status(200).json({
@@ -56,7 +55,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             return res.status(404).json({ error: "Usuário não encontrado" });
         }
 
-        // Buscar projetos do usuário
         const projetosUsuario = await ProjetoDevs.findAll({
             where: { id_usuario: id }
         });
@@ -67,7 +65,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             where: { id_projeto: idsProjetos }
         });
 
-        // Buscar conhecimentos do usuário
         const usuarioConhecimentos = await UsuarioConhecimento.findAll({
             where: { id_usuario: id }
         });
@@ -78,7 +75,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             where: { id_conhecimento: idsConhecimentos }
         });
 
-        // Mapear conhecimentos para incluir o nível
         const conhecimentosComNivel = conhecimentos.map(c => {
             const uc = usuarioConhecimentos.find(uc => uc.id_conhecimento === c.id_conhecimento);
             return {
@@ -88,7 +84,6 @@ exports.getUsuarioComProjetos = async (req, res) => {
             };
         });
 
-        // Buscar todos os conhecimentos disponíveis para o dropdown
         const todosConhecimentos = await Conhecimento.findAll({
             order: [['nome', 'ASC']]
         });
@@ -233,7 +228,6 @@ exports.adicionarConhecimento = async (req, res) => {
         const { id_usuario } = req.params;
         const { nome_conhecimento, nivel } = req.body;
 
-        // Primeiro, procura o conhecimento pelo nome
         const conhecimento = await Conhecimento.findOne({
             where: { nome: nome_conhecimento }
         });
@@ -242,7 +236,6 @@ exports.adicionarConhecimento = async (req, res) => {
             return res.status(404).json({ error: 'Conhecimento não encontrado' });
         }
 
-        // Verifica se o usuário já tem esse conhecimento
         const conhecimentoExistente = await UsuarioConhecimento.findOne({
             where: {
                 id_usuario,
@@ -254,7 +247,6 @@ exports.adicionarConhecimento = async (req, res) => {
             return res.status(400).json({ error: 'Usuário já possui este conhecimento' });
         }
 
-        // Cria a relação usuário-conhecimento
         await UsuarioConhecimento.create({
             id_usuario,
             id_conhecimento: conhecimento.id_conhecimento,
